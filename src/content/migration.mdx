@@ -1,0 +1,22 @@
+## Monolith to Microservice Migration
+
+### Problem
+A legacy Java J2EE monolith running on IBM WebSphere had tightly coupled deployments
+and long release cycles (~41 days). A single backend change required coordination
+across multiple teams and extensive regression testing.
+
+### Approach
+I incrementally extracted a Spring Boot service from the monolith, migrating one
+endpoint at a time. The existing frontend was reused to validate behavior in test
+environments, avoiding a risky big-bang rewrite.
+
+### Key Decisions
+- Chose Cloud SQL over globally distributed databases due to non-global scale
+  requirements and the need for operational simplicity
+- Prioritized deployment isolation and rollback safety over premature scalability
+- Containerized the service early to stabilize environments and reduce config drift
+
+### Outcome
+Releases moved to sprint-level cadence, operational risk was reduced, and clear
+ownership boundaries were established for the extracted service.
+
