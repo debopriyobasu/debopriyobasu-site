@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = allPosts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout
+  title="Blog"
+  description="Writing on software engineering, backend systems, cloud architecture, and full-stack development by Debopriyo Basu."
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li aria-hidden="true" class="breadcrumb-sep">›</li>
+      <li aria-current="page">Blog</li>
+    </ol>
+  </nav>
+
+  <h2 class="blog-index-title">Blog</h2>
+  <p class="blog-index-subtitle">
+    Writing on software engineering, backend systems, cloud architecture, and
+    full-stack development.
+  </p>
+
+  <ul class="blog-post-list">
+    {
+      posts.map((post) => (
+        <li class="blog-post-item">
+          <a href={`/blog/${post.id}`} class="blog-post-link">
+            <span class="blog-post-item-title">{post.data.title}</span>
+            <span class="blog-post-item-date">
+              {post.data.date.toLocaleDateString("en-GB", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <footer class="blog-post-footer">
+    <a href="/" class="back-link">← Back to Home</a>
+  </footer>
+</BaseLayout>

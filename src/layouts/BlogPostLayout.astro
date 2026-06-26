@@ -1,0 +1,39 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  date?: string;
+}
+
+const {
+  title,
+  description = `${title} -a post by Debopriyo Basu`,
+  date,
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li aria-hidden="true" class="breadcrumb-sep">›</li>
+      <li><a href="/blog">Blog</a></li>
+      <li aria-hidden="true" class="breadcrumb-sep">›</li>
+      <li aria-current="page">{title}</li>
+    </ol>
+  </nav>
+
+  <article class="blog-post">
+    <header class="blog-post-header">
+      <h2 class="blog-post-title">{title}</h2>
+      {date && <p class="blog-post-date">{date}</p>}
+    </header>
+
+    <div class="blog-post-body">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
