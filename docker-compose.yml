@@ -1,6 +1,6 @@
 services:
   app:
-    image: node:20-alpine
+    image: node:24-alpine
     container_name: ${COMPOSE_PROJECT_NAME:-debopriyobasu-site}-dev
     ports:
       - "4321:4321"
