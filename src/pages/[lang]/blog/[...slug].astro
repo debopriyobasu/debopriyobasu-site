@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from "astro:content";
+import BlogPostLayout from "../../../layouts/BlogPostLayout.astro";
+import { ui } from "../../../i18n/ui";
+import { getReadingTime } from "../../../utils/readingTime";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+  const nonDefaultLocales = Object.keys(ui).filter((lang) => lang !== "en");
+
+  // Helper function to extract slug and lang from post.id
+  function parsePostId(id: string) {
+    const lastSlash = id.lastIndexOf("/");
+    if (lastSlash === -1) {
+      return { slug: id, postLang: "en" };
+    }
+    return {
+      slug: id.slice(0, lastSlash),
+      postLang: id.slice(lastSlash + 1),
+    };
+  }
+
+  const uniqueSlugs = [...new Set(allPosts.map((post) => parsePostId(post.id).slug))];
+  const paths = [];
+
+  for (const lang of nonDefaultLocales) {
+    for (const slug of uniqueSlugs) {
+      // Find localized version
+      const localizedPost = allPosts.find((p) => {
+        const parsed = parsePostId(p.id);
+        return parsed.slug === slug && parsed.postLang === lang;
+      });
+
+      if (localizedPost) {
+        paths.push({
+          params: { lang, slug },
+          props: { post: localizedPost, isFallback: false },
+        });
+      } else {
+        // Fallback to English version if it exists
+        const englishPost = allPosts.find((p) => {
+          const parsed = parsePostId(p.id);
+          return parsed.slug === slug && parsed.postLang === "en";
+        });
+
+        if (englishPost) {
+          paths.push({
+            params: { lang, slug },
+            props: { post: englishPost, isFallback: true },
+          });
+        }
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { post, isFallback } = Astro.props;
+const { Content } = await render(post);
+const { lang } = Astro.params;
+const readingTime = getReadingTime(post.body);
+
+const formattedDate = post.data.date.toLocaleDateString(lang, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BlogPostLayout
+  title={post.data.title}
+  description={post.data.description}
+  date={formattedDate}
+  tags={post.data.tags}
+  isFallback={isFallback}
+  readingTime={readingTime}
+>
+  <Content />
+</BlogPostLayout>

@@ -1,18 +1,62 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../../i18n/ui";
+import { useTranslations, ui } from "../../../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
+export async function getStaticPaths() {
+  const nonDefaultLocales = Object.keys(ui).filter((lang) => lang !== "en");
+  return nonDefaultLocales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params;
 const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-const posts = allPosts
-  .filter((post) => post.id.startsWith("de/"))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const allTags = [...new Set(posts.flatMap((post) => post.data.tags || []))].sort();
+// Helper function to extract slug and lang from post.id
+function parsePostId(id: string) {
+  const lastSlash = id.lastIndexOf("/");
+  if (lastSlash === -1) {
+    return { slug: id, postLang: "en" };
+  }
+  return {
+    slug: id.slice(0, lastSlash),
+    postLang: id.slice(lastSlash + 1),
+  };
+}
 
-const t = useTranslations("de");
-const homeUrl = getRelativeLocaleUrl("de", "");
+// Find all unique slugs
+const uniqueSlugs = [...new Set(allPosts.map((post) => parsePostId(post.id).slug))];
+
+// Resolve posts for this locale with fallback to English
+const posts = uniqueSlugs
+  .map((slug) => {
+    // 1. Try to find translation for current lang
+    const localizedPost = allPosts.find((p) => {
+      const parsed = parsePostId(p.id);
+      return parsed.slug === slug && parsed.postLang === lang;
+    });
+    if (localizedPost) {
+      return { post: localizedPost, isFallback: false };
+    }
+    // 2. Fallback to English
+    const englishPost = allPosts.find((p) => {
+      const parsed = parsePostId(p.id);
+      return parsed.slug === slug && parsed.postLang === "en";
+    });
+    if (englishPost) {
+      return { post: englishPost, isFallback: true };
+    }
+    return null;
+  })
+  .filter((item): item is { post: any; isFallback: boolean } => item !== null)
+  .sort((a, b) => b.post.data.date.valueOf() - a.post.data.date.valueOf());
+
+const allTags = [...new Set(posts.flatMap((item) => item.post.data.tags || []))].sort();
+
+const t = useTranslations(lang as any);
+const homeUrl = getRelativeLocaleUrl(lang as any, "");
 ---
 
 <BaseLayout
@@ -61,16 +105,19 @@ const homeUrl = getRelativeLocaleUrl("de", "");
 
   <ul class="blog-post-list">
     {
-      posts.map((post) => {
-        const cleanSlug = post.id.replace(/^de\//, "");
-        const postUrl = getRelativeLocaleUrl("de", `blog/${cleanSlug}`);
+      posts.map(({ post, isFallback }) => {
+        const { slug } = parsePostId(post.id);
+        const postUrl = getRelativeLocaleUrl(lang as any, `blog/${slug}`);
         const tagString = post.data.tags ? post.data.tags.join(",") : "";
         return (
           <li class="blog-post-item" data-tags={tagString}>
             <a href={postUrl} class="blog-post-link-row">
-              <span class="blog-post-item-title">{post.data.title}</span>
+              <span class="blog-post-item-title">
+                {post.data.title}
+                {isFallback && <span class="fallback-badge" style="font-size: 0.75rem; font-weight: normal; color: var(--muted); margin-left: 0.5rem; border: 1px solid var(--border); padding: 0.1rem 0.3rem; border-radius: 4px;">EN</span>}
+              </span>
               <span class="blog-post-item-date">
-                {post.data.date.toLocaleDateString("de", {
+                {post.data.date.toLocaleDateString(lang, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -81,7 +128,7 @@ const homeUrl = getRelativeLocaleUrl("de", "");
               <ul class="tags-list">
                 {post.data.tags.map((tag) => (
                   <li class="tag-item">
-                    <a href={getRelativeLocaleUrl("de", "blog") + `?tag=${tag}`}>{tag}</a>
+                    <a href={getRelativeLocaleUrl(lang as any, "blog") + `?tag=${tag}`}>{tag}</a>
                   </li>
                 ))}
               </ul>

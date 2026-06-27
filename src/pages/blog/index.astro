@@ -6,7 +6,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 
 const allPosts = await getCollection("blog", ({ data }) => !data.draft);
 const posts = allPosts
-  .filter((post) => post.id.startsWith("en/"))
+  .filter((post) => post.id.endsWith("/en"))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const allTags = [...new Set(posts.flatMap((post) => post.data.tags || []))].sort();
@@ -62,7 +62,7 @@ const homeUrl = getRelativeLocaleUrl("en", "");
   <ul class="blog-post-list">
     {
       posts.map((post) => {
-        const cleanSlug = post.id.replace(/^en\//, "");
+        const cleanSlug = post.id.replace(/\/en$/, "");
         const postUrl = getRelativeLocaleUrl("en", `blog/${cleanSlug}`);
         const tagString = post.data.tags ? post.data.tags.join(",") : "";
         return (

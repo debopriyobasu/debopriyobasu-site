@@ -489,6 +489,20 @@ a:hover {
   text-decoration: none;
 }
 
+.translation-fallback-banner {
+  background-color: var(--accent-bg);
+  border-left: 3px solid var(--link);
+  padding: 0.75rem 1rem;
+  margin-bottom: 2.5rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.translation-fallback-banner p {
+  margin: 0;
+}
+
 /* Blog index list */
 .blog-post-list {
   list-style: none;

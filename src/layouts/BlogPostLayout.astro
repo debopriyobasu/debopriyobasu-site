@@ -2,12 +2,15 @@
 import BaseLayout from "./BaseLayout.astro";
 import { getLangFromUrl, useTranslations, localizedNames } from "../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { localizeNumbers } from "../utils/readingTime";
 
 interface Props {
   title: string;
   description?: string;
   date?: string;
   tags?: string[];
+  isFallback?: boolean;
+  readingTime?: number;
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -26,7 +29,12 @@ const {
   description = postByTemplates[lang]?.(title, defaultName) || `${title} - a post by ${defaultName}`,
   date,
   tags = [],
+  isFallback = false,
+  readingTime = 0,
 } = Astro.props;
+
+const formattedReadingTime = localizeNumbers(readingTime, lang);
+const readingTimeText = t("blog.reading_time").replace("{minutes}", formattedReadingTime);
 
 const homeUrl = getRelativeLocaleUrl(lang, "");
 const blogUrl = getRelativeLocaleUrl(lang, "blog");
@@ -45,9 +53,18 @@ const blogUrl = getRelativeLocaleUrl(lang, "blog");
   </nav>
 
   <article class="blog-post">
+    {isFallback && (
+      <div class="translation-fallback-banner">
+        <p>{t("blog.fallback_notice")}</p>
+      </div>
+    )}
     <header class="blog-post-header">
       <h2 class="blog-post-title">{title}</h2>
-      {date && <p class="blog-post-date">{date}</p>}
+      <p class="blog-post-meta">
+        {date && <span class="blog-post-date">{date}</span>}
+        {date && <span class="blog-post-meta-separator" aria-hidden="true">•</span>}
+        <span class="blog-post-reading-time">{readingTimeText}</span>
+      </p>
       {tags && tags.length > 0 && (
         <ul class="tags-list" style="margin-top: 0.75rem;">
           {tags.map((tag) => (
@@ -59,8 +76,282 @@ const blogUrl = getRelativeLocaleUrl(lang, "blog");
       )}
     </header>
 
+    <!-- Read Out Loud Player -->
+    <div class="read-aloud-player" data-lang={lang} style="display: none;">
+      <div class="player-controls">
+        <button id="play-pause-btn" class="player-btn" aria-label={t('blog.read_aloud')}>
+          <!-- Play Icon -->
+          <svg id="play-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M8 5v14l11-7z"/>
+          </svg>
+          <!-- Pause Icon (hidden by default) -->
+          <svg id="pause-icon" viewBox="0 0 24 24" width="20" height="20" style="display: none;">
+            <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </button>
+        
+        <button id="stop-btn" class="player-btn" aria-label="Stop listening" disabled>
+          <!-- Stop Icon -->
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M6 6h12v12H6z"/>
+          </svg>
+        </button>
+        
+        <div class="player-status-container">
+          <span id="player-status" class="player-status" data-default-text={t('blog.read_aloud')} data-playing-text={t('blog.read_aloud_playing')} data-paused-text={t('blog.read_aloud_paused')}>
+            {t('blog.read_aloud')}
+          </span>
+        </div>
+      </div>
+      
+      <div class="player-progress-container" aria-hidden="true">
+        <div id="player-progress-bar" class="player-progress-bar"></div>
+      </div>
+    </div>
+
     <div class="blog-post-body">
       <slot />
     </div>
   </article>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!('speechSynthesis' in window)) {
+        return;
+      }
+
+      const player = document.querySelector('.read-aloud-player');
+      const playPauseBtn = document.getElementById('play-pause-btn');
+      const stopBtn = document.getElementById('stop-btn');
+      const statusText = document.getElementById('player-status');
+      const progressBar = document.getElementById('player-progress-bar');
+      const bodyContainer = document.querySelector('.blog-post-body');
+
+      if (!player || !playPauseBtn || !stopBtn || !statusText || !progressBar || !bodyContainer) {
+        return;
+      }
+
+      // Show the player block
+      player.style.display = 'flex';
+
+      const lang = player.getAttribute('data-lang') || 'en';
+      const synth = window.speechSynthesis;
+      let utterance = null;
+      let playerState = 'stopped'; // stopped, playing, paused
+      let readableText = '';
+
+      function getReadableText(container) {
+        const clone = container.cloneNode(true);
+        const toRemove = clone.querySelectorAll('pre, code, style, script, svg, iframe, noscript');
+        toRemove.forEach(el => el.remove());
+        return (clone.innerText || clone.textContent || '').trim();
+      }
+
+      function getVoiceForLang(langCode) {
+        const voices = synth.getVoices();
+        let voice = voices.find(v => v.lang.toLowerCase() === langCode.toLowerCase());
+        if (!voice) {
+          voice = voices.find(v => v.lang.toLowerCase().startsWith(langCode.toLowerCase()));
+        }
+        return voice;
+      }
+
+      if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = () => {
+          // Trigger voice update if needed
+        };
+      }
+
+      function updateUI() {
+        const defaultText = statusText.getAttribute('data-default-text');
+        const playingText = statusText.getAttribute('data-playing-text');
+        const pausedText = statusText.getAttribute('data-paused-text');
+
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        if (playerState === 'playing') {
+          statusText.textContent = playingText;
+          if (playIcon) playIcon.style.display = 'none';
+          if (pauseIcon) pauseIcon.style.display = 'block';
+          stopBtn.disabled = false;
+        } else if (playerState === 'paused') {
+          statusText.textContent = pausedText;
+          if (playIcon) playIcon.style.display = 'block';
+          if (pauseIcon) pauseIcon.style.display = 'none';
+          stopBtn.disabled = false;
+        } else {
+          statusText.textContent = defaultText;
+          if (playIcon) playIcon.style.display = 'block';
+          if (pauseIcon) pauseIcon.style.display = 'none';
+          stopBtn.disabled = true;
+        }
+      }
+
+      function startSpeaking() {
+        synth.cancel();
+
+        if (!readableText) {
+          readableText = getReadableText(bodyContainer);
+        }
+
+        utterance = new SpeechSynthesisUtterance(readableText);
+        utterance.lang = lang;
+
+        const voice = getVoiceForLang(lang);
+        if (voice) {
+          utterance.voice = voice;
+        }
+
+        utterance.onboundary = (event) => {
+          if (event.name === 'word' && readableText.length > 0) {
+            const charIndex = event.charIndex;
+            const progress = (charIndex / readableText.length) * 100;
+            progressBar.style.width = `${progress}%`;
+          }
+        };
+
+        utterance.onend = () => {
+          stopSpeaking();
+        };
+
+        utterance.onerror = (e) => {
+          if (e.error !== 'interrupted') {
+            console.error('SpeechSynthesis error:', e);
+            stopSpeaking();
+          }
+        };
+
+        synth.speak(utterance);
+      }
+
+      function togglePlayPause() {
+        if (playerState === 'stopped') {
+          startSpeaking();
+          playerState = 'playing';
+        } else if (playerState === 'playing') {
+          synth.pause();
+          playerState = 'paused';
+        } else if (playerState === 'paused') {
+          synth.resume();
+          playerState = 'playing';
+        }
+        updateUI();
+      }
+
+      function stopSpeaking() {
+        synth.cancel();
+        playerState = 'stopped';
+        progressBar.style.width = '0%';
+        updateUI();
+      }
+
+      playPauseBtn.addEventListener('click', togglePlayPause);
+      stopBtn.addEventListener('click', stopSpeaking);
+
+      window.addEventListener('beforeunload', () => {
+        synth.cancel();
+      });
+    });
+  </script>
+
+  <style>
+    .blog-post-meta {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .blog-post-meta-separator {
+      color: var(--border);
+    }
+
+    .read-aloud-player {
+      background: var(--accent-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      margin: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .read-aloud-player:hover {
+      border-color: var(--link);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .player-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--link);
+      cursor: pointer;
+      padding: 0.4rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+      width: 36px;
+      height: 36px;
+    }
+
+    .player-btn:hover:not(:disabled) {
+      background: var(--accent-bg);
+      border-color: var(--link);
+      color: var(--link-hover);
+      transform: scale(1.05);
+    }
+
+    .player-btn:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .player-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .player-status-container {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .player-status {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .player-progress-container {
+      width: 100%;
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .player-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--link);
+      border-radius: 3px;
+      transition: width 0.15s ease-out;
+    }
+  </style>
 </BaseLayout>

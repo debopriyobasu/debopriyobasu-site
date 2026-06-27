@@ -6,7 +6,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-  const posts = allPosts.filter((post) => post.id.startsWith("en/"));
+  const posts = allPosts.filter((post) => post.id.endsWith("/en"));
   const tags = [...new Set(posts.flatMap((post) => post.data.tags || []))];
   
   return tags.map((tag) => ({
@@ -45,7 +45,7 @@ const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.val
   <ul class="blog-post-list">
     {
       sortedPosts.map((post) => {
-        const cleanSlug = post.id.replace(/^en\//, "");
+        const cleanSlug = post.id.replace(/\/en$/, "");
         const postUrl = getRelativeLocaleUrl("en", `blog/${cleanSlug}`);
         return (
           <li class="blog-post-item">

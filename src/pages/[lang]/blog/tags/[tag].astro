@@ -1,0 +1,139 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { useTranslations, ui } from "../../../../i18n/ui";
+import { getRelativeLocaleUrl } from "astro:i18n";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+  const nonDefaultLocales = Object.keys(ui).filter((lang) => lang !== "en");
+
+  // Helper function to extract slug and lang from post.id
+  function parsePostId(id: string) {
+    const lastSlash = id.lastIndexOf("/");
+    if (lastSlash === -1) {
+      return { slug: id, postLang: "en" };
+    }
+    return {
+      slug: id.slice(0, lastSlash),
+      postLang: id.slice(lastSlash + 1),
+    };
+  }
+
+  const uniqueSlugs = [...new Set(allPosts.map((post) => parsePostId(post.id).slug))];
+  const paths = [];
+
+  for (const lang of nonDefaultLocales) {
+    // Resolve posts for this locale with fallback to English
+    const postsForLocale = uniqueSlugs
+      .map((slug) => {
+        const localizedPost = allPosts.find((p) => {
+          const parsed = parsePostId(p.id);
+          return parsed.slug === slug && parsed.postLang === lang;
+        });
+        if (localizedPost) {
+          return { post: localizedPost, isFallback: false };
+        }
+        const englishPost = allPosts.find((p) => {
+          const parsed = parsePostId(p.id);
+          return parsed.slug === slug && parsed.postLang === "en";
+        });
+        if (englishPost) {
+          return { post: englishPost, isFallback: true };
+        }
+        return null;
+      })
+      .filter((item): item is { post: any; isFallback: boolean } => item !== null);
+
+    const tags = [...new Set(postsForLocale.flatMap((item) => item.post.data.tags || []))];
+
+    for (const tag of tags) {
+      const postsForTag = postsForLocale.filter((item) => item.post.data.tags?.includes(tag));
+      paths.push({
+        params: { lang, tag },
+        props: { posts: postsForTag },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { tag, lang } = Astro.params;
+const { posts } = Astro.props;
+
+const t = useTranslations(lang as any);
+const homeUrl = getRelativeLocaleUrl(lang as any, "");
+const blogUrl = getRelativeLocaleUrl(lang as any, "blog");
+
+// Helper function to extract slug and lang from post.id
+function parsePostId(id: string) {
+  const lastSlash = id.lastIndexOf("/");
+  if (lastSlash === -1) {
+    return { slug: id, postLang: "en" };
+  }
+  return {
+    slug: id.slice(0, lastSlash),
+    postLang: id.slice(lastSlash + 1),
+  };
+}
+
+const sortedPosts = posts.sort((a, b) => b.post.data.date.valueOf() - a.post.data.date.valueOf());
+---
+
+<BaseLayout
+  title={`${t("blog.tagged_with")} "${tag}"`}
+  description={`${t("blog.tagged_with")} "${tag}"`}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href={homeUrl}>{t("nav.home")}</a></li>
+      <li aria-hidden="true" class="breadcrumb-sep">›</li>
+      <li><a href={blogUrl}>{t("nav.blog")}</a></li>
+      <li aria-hidden="true" class="breadcrumb-sep">›</li>
+      <li aria-current="page">{t("blog.tags")}: {tag}</li>
+    </ol>
+  </nav>
+
+  <h2 class="blog-index-title">{t("blog.tagged_with")} "{tag}"</h2>
+  
+  <ul class="blog-post-list">
+    {
+      sortedPosts.map(({ post, isFallback }) => {
+        const { slug } = parsePostId(post.id);
+        const postUrl = getRelativeLocaleUrl(lang as any, `blog/${slug}`);
+        return (
+          <li class="blog-post-item">
+            <a href={postUrl} class="blog-post-link-row">
+              <span class="blog-post-item-title">
+                {post.data.title}
+                {isFallback && <span class="fallback-badge" style="font-size: 0.75rem; font-weight: normal; color: var(--muted); margin-left: 0.5rem; border: 1px solid var(--border); padding: 0.1rem 0.3rem; border-radius: 4px;">EN</span>}
+              </span>
+              <span class="blog-post-item-date">
+                {post.data.date.toLocaleDateString(lang, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+            </a>
+            {post.data.tags && post.data.tags.length > 0 && (
+              <ul class="tags-list">
+                {post.data.tags.map((tVal) => (
+                  <li class="tag-item">
+                    <a href={getRelativeLocaleUrl(lang as any, "blog") + `?tag=${tVal}`}>{tVal}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <footer class="blog-post-footer">
+    <a href={blogUrl} class="back-link">{t("blog.back_to_blog")}</a>
+  </footer>
+</BaseLayout>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PortfolioHome from "../../components/PortfolioHome.astro";
+import { useTranslations, ui } from "../../i18n/ui";
+
+export function getStaticPaths() {
+  return Object.keys(ui)
+    .filter((lang) => lang !== "en")
+    .map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+---
+
+<BaseLayout
+  title="Debopriyo Basu"
+  description={t("meta.description")}
+>
+  <PortfolioHome lang={lang as any} />
+</BaseLayout>
