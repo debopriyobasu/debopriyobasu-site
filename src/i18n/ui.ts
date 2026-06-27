@@ -47,6 +47,9 @@ export const ui = {
     'blog.read_aloud': 'Listen to this article',
     'blog.read_aloud_playing': 'Playing',
     'blog.read_aloud_paused': 'Paused',
+    'blog.pagination.prev': '← Previous',
+    'blog.pagination.next': 'Next →',
+    'blog.pagination.page': 'Page {page}',
   },
   es: {
     'nav.about': 'Sobre mí',
@@ -76,6 +79,9 @@ export const ui = {
     'blog.read_aloud': 'Escuchar este artículo',
     'blog.read_aloud_playing': 'Reproduciendo',
     'blog.read_aloud_paused': 'Pausado',
+    'blog.pagination.prev': '← Anterior',
+    'blog.pagination.next': 'Siguiente →',
+    'blog.pagination.page': 'Página {page}',
   },
   de: {
     'nav.about': 'Über mich',
@@ -105,6 +111,9 @@ export const ui = {
     'blog.read_aloud': 'Diesen Artikel anhören',
     'blog.read_aloud_playing': 'Wird abgespielt',
     'blog.read_aloud_paused': 'Pausiert',
+    'blog.pagination.prev': '← Vorherige',
+    'blog.pagination.next': 'Nächste →',
+    'blog.pagination.page': 'Seite {page}',
   },
   fr: {
     'nav.about': 'À propos',
@@ -134,6 +143,9 @@ export const ui = {
     'blog.read_aloud': 'Écouter cet article',
     'blog.read_aloud_playing': 'Lecture en cours',
     'blog.read_aloud_paused': 'En pause',
+    'blog.pagination.prev': '← Précédent',
+    'blog.pagination.next': 'Suivant →',
+    'blog.pagination.page': 'Page {page}',
   },
   hi: {
     'nav.about': 'मेरे बारे में',
@@ -163,6 +175,9 @@ export const ui = {
     'blog.read_aloud': 'इस लेख को सुनें',
     'blog.read_aloud_playing': 'चल रहा है',
     'blog.read_aloud_paused': 'रुका हुआ',
+    'blog.pagination.prev': '← पिछला',
+    'blog.pagination.next': 'अगला →',
+    'blog.pagination.page': 'पृष्ठ {page}',
   },
   bn: {
     'nav.about': 'আমার সম্পর্কে',
@@ -193,6 +208,9 @@ export const ui = {
     'blog.read_aloud': 'এই নিবন্ধটি শুনুন',
     'blog.read_aloud_playing': 'চলছে',
     'blog.read_aloud_paused': 'থেমেছে',
+    'blog.pagination.prev': '← পূর্ববর্তী',
+    'blog.pagination.next': 'পরবর্তী →',
+    'blog.pagination.page': 'পৃষ্ঠা {page}',
   },
 } as const;
 

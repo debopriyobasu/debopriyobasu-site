@@ -3,6 +3,8 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { useTranslations } from "../../../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { SITE_CONFIG } from "../../../config";
+import Pagination from "../../../components/Pagination.astro";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog", ({ data }) => !data.draft);
@@ -23,6 +25,7 @@ const homeUrl = getRelativeLocaleUrl("en", "");
 const blogUrl = getRelativeLocaleUrl("en", "blog");
 
 const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const postsPerPage = SITE_CONFIG.postsPerPage;
 ---
 
 <BaseLayout
@@ -74,7 +77,129 @@ const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.val
     }
   </ul>
 
+  <Pagination
+    postsPerPage={postsPerPage}
+    prevText={t("blog.pagination.prev")}
+    nextText={t("blog.pagination.next")}
+    pageText={t("blog.pagination.page")}
+  />
+
   <footer class="blog-post-footer">
     <a href={blogUrl} class="back-link">{t("blog.back_to_blog")}</a>
   </footer>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const postItems = Array.from(document.querySelectorAll('.blog-post-item'));
+      const paginationContainer = document.getElementById('pagination-controls');
+      if (!paginationContainer) return;
+
+      const postsPerPage = parseInt(paginationContainer.getAttribute('data-posts-per-page') || '10', 10);
+      let currentPage = 1;
+
+      function updateBlogList() {
+        const totalPosts = postItems.length;
+        const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+        if (currentPage > totalPages) {
+          currentPage = Math.max(1, totalPages);
+        }
+
+        postItems.forEach((post, index) => {
+          const startIdx = (currentPage - 1) * postsPerPage;
+          const endIdx = startIdx + postsPerPage;
+          if (index >= startIdx && index < endIdx) {
+            post.style.display = '';
+          } else {
+            post.style.display = 'none';
+          }
+        });
+
+        renderPagination(totalPages);
+      }
+
+      function renderPagination(totalPages) {
+        if (totalPages <= 1) {
+          paginationContainer.innerHTML = '';
+          paginationContainer.style.display = 'none';
+          return;
+        }
+
+        paginationContainer.style.display = 'flex';
+        let html = '';
+
+        const prevDisabled = currentPage === 1 ? 'disabled' : '';
+        const prevText = paginationContainer.getAttribute('data-prev-text') || '← Previous';
+        html += `<button class="pagination-btn" data-page="${currentPage - 1}" ${prevDisabled} aria-label="${prevText}">${prevText}</button>`;
+
+        const pagesToShow = [];
+        const range = 1;
+
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
+            pagesToShow.push(i);
+          } else if ((i === currentPage - range - 1 && i > 1) || (i === currentPage + range + 1 && i < totalPages)) {
+            pagesToShow.push('...');
+          }
+        }
+
+        let lastVal = null;
+        pagesToShow.forEach(p => {
+          if (p === '...') {
+            if (lastVal !== '...') {
+              html += `<span class="pagination-ellipsis" aria-hidden="true">...</span>`;
+            }
+          } else {
+            const activeClass = p === currentPage ? 'active' : '';
+            const pageText = paginationContainer.getAttribute('data-page-text') || 'Page {page}';
+            const ariaLabel = pageText.replace('{page}', String(p));
+            const ariaCurrent = p === currentPage ? 'aria-current="page"' : '';
+            html += `<button class="pagination-btn ${activeClass}" data-page="${p}" ${ariaCurrent} aria-label="${ariaLabel}">${p}</button>`;
+          }
+          lastVal = p;
+        });
+
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        const nextText = paginationContainer.getAttribute('data-next-text') || 'Next →';
+        html += `<button class="pagination-btn" data-page="${currentPage + 1}" ${nextDisabled} aria-label="${nextText}">${nextText}</button>`;
+
+        paginationContainer.innerHTML = html;
+
+        paginationContainer.querySelectorAll('button[data-page]').forEach(button => {
+          button.addEventListener('click', () => {
+            const targetPage = parseInt(button.getAttribute('data-page') || '1', 10);
+            if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
+              currentPage = targetPage;
+
+              const url = new URL(window.location.href);
+              url.searchParams.set('page', String(currentPage));
+              window.history.pushState({}, '', url.toString());
+
+              updateBlogList();
+
+              const blogList = document.querySelector('.blog-post-list');
+              if (blogList) {
+                blogList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          });
+        });
+      }
+
+      // Initial check on load
+      const params = new URLSearchParams(window.location.search);
+      const initialPage = parseInt(params.get('page') || '1', 10);
+      if (initialPage > 0) {
+        currentPage = initialPage;
+      }
+
+      window.addEventListener('popstate', () => {
+        const stateParams = new URLSearchParams(window.location.search);
+        currentPage = parseInt(stateParams.get('page') || '1', 10);
+        updateBlogList();
+      });
+
+      updateBlogList();
+    });
+  </script>
 </BaseLayout>

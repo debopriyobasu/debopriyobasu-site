@@ -2,7 +2,7 @@
 title: "Création d'un comparateur de CV sémantique: hors ligne, privé et vraiment intelligent"
 description: "Comment j'ai construit un système de correspondance de CV entièrement local et alimenté par l'IA qui respecte la confidentialité des données, élimine les coûts des API cloud et va bien au-delà de la simple recherche par mots-clés."
 date: 2026-06-26
-tags: ["IA", "Postgres", "FastAPI", "React"]
+tags: ["AI", "Postgres", "FastAPI", "React"]
 ---
 
 Le recrutement à grande échelle est défaillant. Non pas parce que les entreprises manquent de candidats, mais parce que les outils utilisés pour identifier les bons profils sont d'une simplicité embarrassante pour 2026. J'ai créé **Semantic Resume Matcher** pour résoudre ce problème, et ce, entièrement hors ligne.

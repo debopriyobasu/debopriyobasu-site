@@ -2,7 +2,7 @@
 title: "Construyendo un comparador semántico de currículums - Offline, privado y realmente inteligente"
 description: "Cómo construí un sistema de emparejamiento de currículums completamente local e impulsado por IA que respeta la privacidad de los datos, elimina los costes de API en la nube y va mucho más allá de la búsqueda de palabras clave."
 date: 2026-06-26
-tags: ["IA", "Postgres", "FastAPI", "React"]
+tags: ["AI", "Postgres", "FastAPI", "React"]
 ---
 
 La contratación a gran escala está rota. No porque a las empresas les falten candidatos, sino porque las herramientas utilizadas para identificar a los adecuados son vergonzosamente primitivas para 2026. Construí **Semantic Resume Matcher** para solucionar esto, y hacerlo completamente sin conexión.

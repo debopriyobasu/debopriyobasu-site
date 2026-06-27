@@ -2,7 +2,7 @@
 title: "Entwicklung eines Semantic Resume Matcher: Offline, privat und wirklich intelligent"
 description: "Wie ich ein vollständig lokales, KI-gestütztes System zur Lebenslaufprüfung entwickelt habe, das den Datenschutz respektiert, Cloud-API-Kosten eliminiert und weit über die reine Stichwortsuche hinausgeht."
 date: 2026-06-26
-tags: ["KI", "Postgres", "FastAPI", "React"]
+tags: ["AI", "Postgres", "FastAPI", "React"]
 ---
 
 Die Personalbeschaffung im großen Stil ist fehlerhaft. Nicht, weil es den Unternehmen an Kandidaten mangelt, sondern weil die Werkzeuge zur Identifizierung der richtigen Personen für das Jahr 2026 beschämend primitiv sind. Ich habe den **Semantic Resume Matcher** entwickelt, um dieses Problem zu beheben, und zwar vollständig offline.

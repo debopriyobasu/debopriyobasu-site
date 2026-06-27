@@ -31,4 +31,6 @@ To add a new blog post, follow these rules:
    draft: false
    tags: ["Tag1", "Tag2"]
    ```
+7. **English-Only Tags**: All tags in the frontmatter `tags` list must be strictly in English across all translation files (e.g. use `"AI"` instead of localized variations like `"IA"` or `"KI"`). This ensures a single unified set of tags is used for routing, indexing, and filtering across all supported locales.
+
 

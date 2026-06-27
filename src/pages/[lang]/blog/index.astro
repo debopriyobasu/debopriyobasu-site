@@ -3,6 +3,8 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { useTranslations, ui } from "../../../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { SITE_CONFIG } from "../../../config";
+import Pagination from "../../../components/Pagination.astro";
 
 export async function getStaticPaths() {
   const nonDefaultLocales = Object.keys(ui).filter((lang) => lang !== "en");
@@ -57,6 +59,7 @@ const allTags = [...new Set(posts.flatMap((item) => item.post.data.tags || []))]
 
 const t = useTranslations(lang as any);
 const homeUrl = getRelativeLocaleUrl(lang as any, "");
+const postsPerPage = SITE_CONFIG.postsPerPage;
 ---
 
 <BaseLayout
@@ -139,6 +142,13 @@ const homeUrl = getRelativeLocaleUrl(lang as any, "");
     }
   </ul>
 
+  <Pagination
+    postsPerPage={postsPerPage}
+    prevText={t("blog.pagination.prev")}
+    nextText={t("blog.pagination.next")}
+    pageText={t("blog.pagination.page")}
+  />
+
   <footer class="blog-post-footer">
     <a href={homeUrl} class="back-link">{t("blog.back")}</a>
   </footer>
@@ -149,7 +159,14 @@ const homeUrl = getRelativeLocaleUrl(lang as any, "");
       const collapseContent = document.getElementById('filter-collapse');
       const tagSearch = document.getElementById('tag-search');
       const tagItems = document.querySelectorAll('.filter-tag-item');
-      const postItems = document.querySelectorAll('.blog-post-item');
+      const postItems = Array.from(document.querySelectorAll('.blog-post-item'));
+      const paginationContainer = document.getElementById('pagination-controls');
+
+      if (!paginationContainer) return;
+
+      const postsPerPage = parseInt(paginationContainer.getAttribute('data-posts-per-page') || '10', 10);
+      let currentTag = 'all';
+      let currentPage = 1;
 
       // 1. Toggle filter collapse
       toggleBtn?.addEventListener('click', () => {
@@ -158,23 +175,120 @@ const homeUrl = getRelativeLocaleUrl(lang as any, "");
         collapseContent?.classList.toggle('hidden');
       });
 
-      // Filter function
-      function applyTagFilter(selectedTag) {
+      // Filter and paginate main logic
+      function updateBlogList() {
+        // Filter posts matching currentTag
+        const matchingPosts = postItems.filter(post => {
+          if (currentTag === 'all') return true;
+          const postTagsStr = post.getAttribute('data-tags') || '';
+          const postTags = postTagsStr.split(',').map(t => t.trim()).filter(Boolean);
+          return postTags.includes(currentTag);
+        });
+
+        const totalPosts = matchingPosts.length;
+        const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+        // Adjust currentPage if it goes out of bounds
+        if (currentPage > totalPages) {
+          currentPage = Math.max(1, totalPages);
+        }
+
+        // Hide all posts by default
+        postItems.forEach(post => {
+          post.style.display = 'none';
+        });
+
+        // Show posts for current page
+        const startIdx = (currentPage - 1) * postsPerPage;
+        const endIdx = startIdx + postsPerPage;
+        const pagePosts = matchingPosts.slice(startIdx, endIdx);
+        pagePosts.forEach(post => {
+          post.style.display = '';
+        });
+
+        renderPagination(totalPages);
+      }
+
+      // Render pagination buttons dynamically
+      function renderPagination(totalPages) {
+        if (totalPages <= 1) {
+          paginationContainer.innerHTML = '';
+          paginationContainer.style.display = 'none';
+          return;
+        }
+
+        paginationContainer.style.display = 'flex';
+        let html = '';
+
+        // Previous button
+        const prevDisabled = currentPage === 1 ? 'disabled' : '';
+        const prevText = paginationContainer.getAttribute('data-prev-text') || '← Previous';
+        html += `<button class="pagination-btn" data-page="${currentPage - 1}" ${prevDisabled} aria-label="${prevText}">${prevText}</button>`;
+
+        // Numbered pages (with ellipsis truncation if many pages)
+        const pagesToShow = [];
+        const range = 1; // pages to show around current page
+
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
+            pagesToShow.push(i);
+          } else if ((i === currentPage - range - 1 && i > 1) || (i === currentPage + range + 1 && i < totalPages)) {
+            pagesToShow.push('...');
+          }
+        }
+
+        let lastVal = null;
+        pagesToShow.forEach(p => {
+          if (p === '...') {
+            if (lastVal !== '...') {
+              html += `<span class="pagination-ellipsis" aria-hidden="true">...</span>`;
+            }
+          } else {
+            const activeClass = p === currentPage ? 'active' : '';
+            const pageText = paginationContainer.getAttribute('data-page-text') || 'Page {page}';
+            const ariaLabel = pageText.replace('{page}', String(p));
+            const ariaCurrent = p === currentPage ? 'aria-current="page"' : '';
+            html += `<button class="pagination-btn ${activeClass}" data-page="${p}" ${ariaCurrent} aria-label="${ariaLabel}">${p}</button>`;
+          }
+          lastVal = p;
+        });
+
+        // Next button
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        const nextText = paginationContainer.getAttribute('data-next-text') || 'Next →';
+        html += `<button class="pagination-btn" data-page="${currentPage + 1}" ${nextDisabled} aria-label="${nextText}">${nextText}</button>`;
+
+        paginationContainer.innerHTML = html;
+
+        // Add click events to buttons
+        paginationContainer.querySelectorAll('button[data-page]').forEach(button => {
+          button.addEventListener('click', () => {
+            const targetPage = parseInt(button.getAttribute('data-page') || '1', 10);
+            if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
+              currentPage = targetPage;
+
+              const url = new URL(window.location.href);
+              url.searchParams.set('page', String(currentPage));
+              window.history.pushState({}, '', url.toString());
+
+              updateBlogList();
+
+              const blogList = document.querySelector('.blog-post-list');
+              if (blogList) {
+                blogList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          });
+        });
+      }
+
+      // Update active tag button class in filters panel
+      function updateTagUI() {
         tagItems.forEach(item => {
-          if (item.getAttribute('data-tag') === selectedTag) {
+          if (item.getAttribute('data-tag') === currentTag) {
             item.classList.add('active');
           } else {
             item.classList.remove('active');
-          }
-        });
-
-        postItems.forEach(post => {
-          const postTagsStr = post.getAttribute('data-tags') || '';
-          const postTags = postTagsStr.split(',').map(t => t.trim()).filter(Boolean);
-          if (selectedTag === 'all' || postTags.includes(selectedTag)) {
-            post.style.display = '';
-          } else {
-            post.style.display = 'none';
           }
         });
       }
@@ -183,15 +297,20 @@ const homeUrl = getRelativeLocaleUrl(lang as any, "");
       tagItems.forEach(item => {
         item.addEventListener('click', () => {
           const tag = item.getAttribute('data-tag') || 'all';
-          applyTagFilter(tag);
-          
+          currentTag = tag;
+          currentPage = 1;
+
           const url = new URL(window.location.href);
           if (tag === 'all') {
             url.searchParams.delete('tag');
           } else {
             url.searchParams.set('tag', tag);
           }
-          window.history.replaceState({}, '', url.toString());
+          url.searchParams.delete('page');
+          window.history.pushState({}, '', url.toString());
+
+          updateTagUI();
+          updateBlogList();
         });
       });
 
@@ -214,10 +333,27 @@ const homeUrl = getRelativeLocaleUrl(lang as any, "");
       const params = new URLSearchParams(window.location.search);
       const initialTag = params.get('tag');
       if (initialTag) {
-        applyTagFilter(initialTag);
+        currentTag = initialTag;
         toggleBtn?.setAttribute('aria-expanded', 'true');
         collapseContent?.classList.remove('hidden');
       }
+
+      const initialPage = parseInt(params.get('page') || '1', 10);
+      if (initialPage > 0) {
+        currentPage = initialPage;
+      }
+
+      // 5. Browser history popstate handler
+      window.addEventListener('popstate', () => {
+        const stateParams = new URLSearchParams(window.location.search);
+        currentTag = stateParams.get('tag') || 'all';
+        currentPage = parseInt(stateParams.get('page') || '1', 10);
+        updateTagUI();
+        updateBlogList();
+      });
+
+      updateTagUI();
+      updateBlogList();
     });
   </script>
 </BaseLayout>

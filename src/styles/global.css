@@ -833,3 +833,68 @@ a:hover {
 .filter-tag-item.active button {
   color: var(--bg) !important;
 }
+
+/* ============================================================
+   Pagination
+   ============================================================ */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 2.5rem 0;
+  padding: 0;
+  width: 100%;
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  background-color: var(--accent-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  user-select: none;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--border);
+  color: var(--link-hover);
+  border-color: var(--link-hover);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.pagination-btn.active {
+  background-color: var(--link) !important;
+  color: var(--bg) !important;
+  border-color: var(--link) !important;
+  font-weight: 600;
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  user-select: none;
+}

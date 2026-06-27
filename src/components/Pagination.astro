@@ -1,0 +1,16 @@
+---
+interface Props {
+  postsPerPage: number;
+  prevText: string;
+  nextText: string;
+  pageText: string;
+}
+
+const { postsPerPage, prevText, nextText, pageText } = Astro.props;
+---
+
+<nav id="pagination-controls" class="pagination-container"
+     data-posts-per-page={postsPerPage}
+     data-prev-text={prevText}
+     data-next-text={nextText}
+     data-page-text={pageText}></nav>
