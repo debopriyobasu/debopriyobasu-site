@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/ui";
+import { getRelativeLocaleUrl } from "astro:i18n";
 
 interface Props {
   title: string;
@@ -9,18 +11,24 @@ interface Props {
 
 const {
   title,
-  description = `${title} -a post by Debopriyo Basu`,
+  description = `${title} - a post by Debopriyo Basu`,
   date,
 } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const homeUrl = getRelativeLocaleUrl(lang, "");
+const blogUrl = getRelativeLocaleUrl(lang, "blog");
 ---
 
 <BaseLayout title={title} description={description}>
   <!-- Breadcrumb -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol>
-      <li><a href="/">Home</a></li>
+      <li><a href={homeUrl}>{t("nav.home")}</a></li>
       <li aria-hidden="true" class="breadcrumb-sep">›</li>
-      <li><a href="/blog">Blog</a></li>
+      <li><a href={blogUrl}>{t("nav.blog")}</a></li>
       <li aria-hidden="true" class="breadcrumb-sep">›</li>
       <li aria-current="page">{title}</li>
     </ol>

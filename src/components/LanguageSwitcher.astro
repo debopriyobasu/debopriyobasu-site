@@ -1,0 +1,262 @@
+---
+import { languages, getLangFromUrl, getLocalizedPath } from '../i18n/ui';
+
+const currentLang = getLangFromUrl(Astro.url);
+const { pathname } = Astro.url;
+---
+
+<div class="lang-switcher-container">
+  <details class="lang-dropdown" id="langDropdown">
+    <summary class="lang-summary" aria-haspopup="listbox" aria-label="Select Language">
+      <!-- Globe Icon -->
+      <svg
+        class="globe-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="2" y1="12" x2="22" y2="12"></line>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+      </svg>
+      
+      <span class="active-label">{languages[currentLang]}</span>
+      
+      <!-- Chevron Icon -->
+      <svg
+        class="chevron-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </summary>
+    
+    <div class="lang-menu" role="listbox">
+      {
+        Object.entries(languages).map(([code, label]) => {
+          const isActive = code === currentLang;
+          const targetPath = getLocalizedPath(pathname, code as any);
+
+          return (
+            <a
+              href={targetPath}
+              class:list={['lang-item', { 'lang-item--active': isActive }]}
+              role="option"
+              aria-selected={isActive}
+            >
+              <span class="lang-name">{label}</span>
+              {isActive && (
+                <svg
+                  class="check-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              )}
+            </a>
+          );
+        })
+      }
+    </div>
+  </details>
+</div>
+
+<script>
+  // Close the dropdown when clicking outside
+  document.addEventListener('click', (event) => {
+    const dropdown = document.getElementById('langDropdown') as HTMLDetailsElement | null;
+    if (!dropdown) return;
+    
+    if (!dropdown.contains(event.target as Node)) {
+      dropdown.removeAttribute('open');
+    }
+  });
+
+  // Close the dropdown on Escape key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      const dropdown = document.getElementById('langDropdown') as HTMLDetailsElement | null;
+      if (dropdown && dropdown.hasAttribute('open')) {
+        dropdown.removeAttribute('open');
+      }
+    }
+  });
+</script>
+
+<style>
+  .lang-switcher-container {
+    position: relative;
+    width: 100%;
+    margin-top: auto; /* Push to bottom of sidebar in desktop nav */
+  }
+
+  .lang-dropdown {
+    width: fit-content;
+  }
+
+  /* Hide default details marker */
+  .lang-summary::-webkit-details-marker {
+    display: none;
+  }
+  .lang-summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background-color: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .lang-summary:hover {
+    border-color: var(--muted);
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .globe-icon {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .active-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .chevron-icon {
+    color: var(--muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  /* Chevron rotation on open */
+  .lang-dropdown[open] .chevron-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown Menu Container */
+  .lang-menu {
+    position: absolute;
+    bottom: 100%; /* Opens upwards by default in sidebar */
+    left: 0;
+    margin-bottom: 0.5rem;
+    background-color: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    padding: 0.35rem;
+    width: max-content;
+    min-width: 130px;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  /* Dropdown menu animations */
+  .lang-dropdown[open] .lang-menu {
+    animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Dropdown item */
+  .lang-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .lang-item:hover {
+    background-color: var(--bg);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .lang-item--active {
+    color: var(--link);
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .check-icon {
+    color: var(--link);
+    flex-shrink: 0;
+  }
+
+  /* Mobile layout styling: open downwards since nav goes to the top */
+  @media (max-width: 640px) {
+    .lang-switcher-container {
+      margin-top: 0.25rem;
+      align-self: flex-start;
+      width: auto;
+    }
+
+    .lang-menu {
+      bottom: auto;
+      top: 100%;
+      margin-bottom: 0;
+      margin-top: 0.5rem;
+    }
+    
+    .lang-dropdown[open] .lang-menu {
+      animation: slideDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+</style>

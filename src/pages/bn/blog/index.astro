@@ -1,16 +1,16 @@
 ---
 import { getCollection } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../i18n/ui";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 const allPosts = await getCollection("blog", ({ data }) => !data.draft);
 const posts = allPosts
-  .filter((post) => post.id.startsWith("en/"))
+  .filter((post) => post.id.startsWith("bn/"))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const t = useTranslations("en");
-const homeUrl = getRelativeLocaleUrl("en", "");
+const t = useTranslations("bn");
+const homeUrl = getRelativeLocaleUrl("bn", "");
 ---
 
 <BaseLayout
@@ -32,14 +32,14 @@ const homeUrl = getRelativeLocaleUrl("en", "");
   <ul class="blog-post-list">
     {
       posts.map((post) => {
-        const cleanSlug = post.id.replace(/^en\//, "");
-        const postUrl = getRelativeLocaleUrl("en", `blog/${cleanSlug}`);
+        const cleanSlug = post.id.replace(/^bn\//, "");
+        const postUrl = getRelativeLocaleUrl("bn", `blog/${cleanSlug}`);
         return (
           <li class="blog-post-item">
             <a href={postUrl} class="blog-post-link">
               <span class="blog-post-item-title">{post.data.title}</span>
               <span class="blog-post-item-date">
-                {post.data.date.toLocaleDateString("en-GB", {
+                {post.data.date.toLocaleDateString("bn", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

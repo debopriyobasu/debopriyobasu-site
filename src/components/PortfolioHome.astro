@@ -1,0 +1,156 @@
+---
+import { homeDataMap } from "../i18n/data";
+import { useTranslations } from "../i18n/ui";
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+interface Props {
+  lang: 'en' | 'es' | 'hi' | 'bn';
+}
+
+const { lang } = Astro.props;
+const data = homeDataMap[lang];
+const t = useTranslations(lang);
+const blogUrl = getRelativeLocaleUrl(lang, 'blog');
+
+const taglines = {
+  en: 'Senior Full Stack Software Engineer',
+  es: 'Ingeniero de Software Senior Full Stack',
+  hi: 'सीनियर फुल स्टैक सॉफ्टवेयर इंजीनियर',
+  bn: 'সিনিয়র ফুল স্ট্যাক সফ্টওয়্যার ইঞ্জিনিয়ার',
+};
+---
+
+<h1 class="identity-name-heading">Debopriyo Basu</h1>
+<p class="tagline">
+  {taglines[lang]}
+</p>
+<p class="tech-stack">Java · Spring Boot · React · GCP</p>
+
+<p class="bio">
+  {data.bio}
+</p>
+
+<p>
+  <a href={blogUrl}>{t('blog.read_more')}</a>
+</p>
+
+<!-- Skills -->
+<section class="section" aria-labelledby="skills-heading">
+  <h2 id="skills-heading">{t('section.skills')}</h2>
+
+  <div class="skills-grid">
+    {
+      data.skills.map((group) => (
+        <div class="skill-group">
+          <h3>{group.title}</h3>
+          <ul>
+            {group.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<!-- Experience -->
+<section class="section" aria-labelledby="experience-heading">
+  <h2 id="experience-heading">{t('section.experience')}</h2>
+
+  <ol class="experience-list">
+    {
+      data.experience.map((item) => (
+        <li class="experience-item">
+          <div class="experience-header">
+            <span class="experience-role">{item.role}</span>
+            <span class="experience-dates">{item.dates}</span>
+          </div>
+          <p class="experience-company">{item.company}</p>
+          <ul class="experience-bullets">
+            {item.bullets.map((bullet) => (
+              <li>{bullet}</li>
+            ))}
+          </ul>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<!-- Projects -->
+<section class="section" aria-labelledby="projects-heading">
+  <h2 id="projects-heading">{t('section.projects')}</h2>
+
+  <ul class="project-list">
+    {
+      data.projects.map((project) => (
+        <li class="project-item">
+          <div class="project-header">
+            <a
+              href={project.url}
+              class="project-title"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {project.title}
+            </a>
+          </div>
+          <p class="project-description">{project.description}</p>
+          <p class="project-stack">
+            <span class="stack-label">Stack:</span> {project.stack}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<!-- Certifications -->
+<section class="section" aria-labelledby="certs-heading">
+  <h2 id="certs-heading">{t('section.certs')}</h2>
+
+  <dl class="cert-list">
+    {
+      data.certs.map((group) => (
+        <>
+          <dt class="cert-group-label">{group.label}</dt>
+          {group.items.map((item) => (
+            <dd>{item}</dd>
+          ))}
+        </>
+      ))
+    }
+  </dl>
+</section>
+
+<!-- Education -->
+<section class="section" aria-labelledby="education-heading">
+  <h2 id="education-heading">{t('section.education')}</h2>
+
+  {
+    data.education.map((edu) => (
+      <div class="education-item">
+        <div class="experience-header">
+          <span class="experience-role">{edu.degree}</span>
+          <span class="experience-dates">{edu.dates}</span>
+        </div>
+        <p class="experience-company">{edu.school}</p>
+      </div>
+    ))
+  }
+</section>
+
+<!-- Links -->
+<p class="links">
+  <a
+    href="https://linkedin.com/in/dpbasu"
+    target="_blank"
+    rel="noopener noreferrer">LinkedIn</a
+  >
+  &nbsp;·&nbsp;<a
+    href="https://github.com/debopriyobasu"
+    target="_blank"
+    rel="noopener noreferrer">GitHub</a
+  >
+</p>
