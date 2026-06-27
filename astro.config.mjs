@@ -9,7 +9,7 @@ export default defineConfig({
   integrations: [mdx()],
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'es', 'hi', 'bn'],
+    locales: ['en', 'es', 'hi', 'bn', 'de', 'fr'],
     routing: {
       prefixDefaultLocale: false,
     },

@@ -37,7 +37,7 @@ export interface HomeData {
   education: EducationItem[];
 }
 
-export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn', HomeData> = {
+export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeData> = {
   en: {
     bio: 'I am a senior full stack software engineer with 7+ years of experience building and modernising software systems end-to-end, from cloud-native microservice backends in Java and Spring Boot to interactive frontend experiences in React.',
     skills: [
@@ -467,6 +467,222 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn', HomeData> = {
         degree: 'বি.টেক - কম্পিউটার সায়েন্স অ্যান্ড ইঞ্জিনিয়ারিং',
         dates: 'সিজিপিএ: ৮.৮৩ / ১০',
         school: 'ইউনিভার্সিটি অফ ইঞ্জিনিয়ারিং অ্যান্ড ম্যানেজমেন্ট, কলকাতা',
+      },
+    ],
+  },
+  de: {
+    bio: 'Ich bin ein Senior Full Stack Software Engineer mit mehr als 7 Jahren Erfahrung im End-to-End-Aufbau und der Modernisierung von Softwaresystemen, von Cloud-nativem Microservice-Backend in Java und Spring Boot bis hin zu interaktiven Frontend-Erlebnissen in React.',
+    skills: [
+      {
+        title: 'Backend',
+        items: [
+          'Java · Spring Boot',
+          'FastAPI · Asynchrones Python',
+          'REST-APIs · Microservices',
+          'PostgreSQL · pgvector · Cloud SQL',
+        ],
+      },
+      {
+        title: 'Frontend',
+        items: [
+          'React · JavaScript · TypeScript',
+          'HTML · CSS · Responsive Design',
+          'Astro · Komponentenarchitektur',
+          'REST-API-Integration',
+        ],
+      },
+      {
+        title: 'Cloud & Infrastruktur',
+        items: [
+          'Google Cloud Platform (GCP)',
+          'Google Kubernetes Engine (GKE)',
+          'AWS · Microsoft Azure',
+          'Docker · Containerisierung',
+        ],
+      },
+      {
+        title: 'Entwicklerplattformen',
+        items: [
+          'Backstage Golden Paths',
+          'Jenkins Groovy DSL Pipelines',
+          'GitHub Actions · CI/CD',
+          'Ollama (Gemma3 · Llama3.2)',
+        ],
+      },
+    ],
+    experience: [
+      {
+        role: 'Senior Software Engineer',
+        company: 'Wipro Limited',
+        dates: 'Mai 2019 - Gegenwart',
+        bullets: [
+          'Federführend bei der Softwarearchitektur und der End-to-End-Migration eines Legacy Java J2EE Monolithen zu einer Cloud-nativen Spring Boot 3.x Microservice-Architektur auf Google Kubernetes Engine (GKE).',
+          'Schreiben von sauberem, produktionsreifem Code in Java 17 und Entkoppeln von Systemabhängigkeiten, um einen manuellen 41-tägigen Release-Zyklus in schnelle, automatisierte Bereitstellungen auf Sprint-Ebene zu verwandeln, die von Jenkins Groovy DSL Pipelines gesteuert werden.',
+          'Nutzung von Backstage Golden Paths und Software-Scaffolding-Vorlagen für ein schnelles Bootstrapping von produktionsbereiten Java-Diensten, wodurch Konformität, strukturiertes Logging und Day-1-Bereitstellungsfähigkeit gewährleistet wurden.',
+          'Erweiterung eines proprietären, auf Python basierenden "Easy-Ingest"-Frameworks zur Abstraktion komplexer Datenpipelines, wodurch wiederkehrende manuelle Entwicklungsanfragen in automatisierte, selbstbediente Infrastrukturskripte umgewandelt wurden.',
+          'Bereichsübergreifende Zusammenarbeit mit Architekten, Frontend-Teams und QS-Spezialisten; Eintreten für Best Practices für interne Entwicklerplattformen zur Maximierung der Onboarding-Geschwindigkeit und Minimierung von Umgebungsabweichungen.',
+        ],
+      },
+    ],
+    projects: [
+      {
+        title: 'AI-Powered Offline Semantic Resume Matcher',
+        description: 'Eine vollständig lokale KI-gestützte Matching-Engine, die Lebensläufe auf tiefgehende technische Konzepte statt auf einfache Schlüsselwörter scannt und so Datenschutzrisiken ausschließt. Ermöglicht die sichere Verarbeitung Tausender sensibler Profile zu null Grenzkosten durch die Ausführung vollständig innerhalb der lokalen Infrastruktur.',
+        stack: 'FastAPI · Asynchrones Python · PostgreSQL + pgvector · Ollama (Gemma3 / Llama3.2) · Docker · React',
+        url: 'https://github.com/debopriyobasu/semantic-resume-matcher',
+      },
+    ],
+    certs: [
+      {
+        label: 'KI & Generative KI',
+        items: [
+          'Oracle Generative AI Zertifizierter Experte',
+          'Oracle AI Vector Search Zertifizierter Experte',
+          'Oracle Cloud Infrastructure AI Foundations-Associate',
+        ],
+      },
+      {
+        label: 'Cloud-Architektur',
+        items: [
+          'Google Cloud Professional Cloud-Architekt',
+          'AWS Certified Solutions Architect - Associate',
+        ],
+      },
+      {
+        label: 'Google Cloud',
+        items: [
+          'Google Cloud Associate Cloud-Ingenieur',
+          'Google Cloud Associate Data-Praktiker',
+        ],
+      },
+      {
+        label: 'Microsoft Azure',
+        items: [
+          'Microsoft Certified Azure Fundamentals',
+          'Microsoft Certified Azure Data Fundamentals',
+        ],
+      },
+      {
+        label: 'Frontend & Sonstiges',
+        items: [
+          'Mozilla JavaScript-Grundlagen Professional-Zertifikat',
+          'Meta Frontend-Entwickler Spezialisierung',
+        ],
+      },
+    ],
+    education: [
+      {
+        degree: 'B.Tech - Informatik & Ingenieurwesen',
+        dates: 'CGPA: 8.83 / 10',
+        school: 'University of Engineering & Management, Kolkata',
+      },
+    ],
+  },
+  fr: {
+    bio: "Je suis un ingénieur logiciel senior full stack avec plus de 7 ans d'expérience dans la construction et la modernisation de systèmes logiciels de bout en bout, des backends de microservices cloud-native en Java et Spring Boot aux expériences frontend interactives en React.",
+    skills: [
+      {
+        title: 'Backend',
+        items: [
+          'Java · Spring Boot',
+          'FastAPI · Python asynchrone',
+          'APIs REST · Microservices',
+          'PostgreSQL · pgvector · Cloud SQL',
+        ],
+      },
+      {
+        title: 'Frontend',
+        items: [
+          'React · JavaScript · TypeScript',
+          'HTML · CSS · Design adaptatif',
+          'Astro · Architecture des composants',
+          'Intégration d\'API REST',
+        ],
+      },
+      {
+        title: 'Cloud & Infrastructure',
+        items: [
+          'Google Cloud Platform (GCP)',
+          'Google Kubernetes Engine (GKE)',
+          'AWS · Microsoft Azure',
+          'Docker · Conteneurisation',
+        ],
+      },
+      {
+        title: 'Plateformes de développement',
+        items: [
+          'Backstage Golden Paths',
+          'Pipelines DSL Jenkins Groovy',
+          'GitHub Actions · CI/CD',
+          'Ollama (Gemma3 · Llama3.2)',
+        ],
+      },
+    ],
+    experience: [
+      {
+        role: 'Ingénieur Logiciel Senior',
+        company: 'Wipro Limited',
+        dates: 'Mai 2019 - Présent',
+        bullets: [
+          "Supervision de l'architecture logicielle et de la migration de bout en bout d'un monolithe Java J2EE existant vers une architecture de microservices Spring Boot 3.x native dans le cloud sur Google Kubernetes Engine (GKE).",
+          "Rédaction d'un code propre et prêt pour la production en Java 17 et découplage des dépendances système pour réduire un cycle de publication manuel de 41 jours à des déploiements rapides et automatisés au niveau des sprints, pilotés par des pipelines DSL Jenkins Groovy.",
+          "Utilisation de Backstage Golden Paths d'entreprise et de modèles de scaffolding logiciel pour initialiser rapidement des services Java prêts pour la production, garantissant la conformité, la journalisation structurée et la capacité de déploiement dès le premier jour.",
+          "Extension d'un framework propriétaire basé sur Python \"Easy-Ingest\" pour abstraire les pipelines de données complexes, transformant les demandes d'ingénierie manuelles récurrentes en scripts d'infrastructure automatisés et en libre-service.",
+          "Collaboration transversale avec les architectes, les équipes frontend et les spécialistes de l'assurance qualité; promotion des meilleures pratiques des plateformes de développement internes pour maximiser la vitesse d'intégration et minimiser les dérives d'environnement.",
+        ],
+      },
+    ],
+    projects: [
+      {
+        title: 'AI-Powered Offline Semantic Resume Matcher',
+        description: "Un moteur de correspondance entièrement local basé sur l'IA qui analyse les CV pour y trouver des concepts techniques profonds plutôt que de simples mots-clés, éliminant ainsi les risques liés à la confidentialité des données. Permet un traitement sécurisé et à coût matériel nul de milliers de profils sensibles en s'exécutant entièrement au sein de l'infrastructure locale.",
+        stack: "FastAPI · Python asynchrone · PostgreSQL + pgvector · Ollama (Gemma3 / Llama3.2) · Docker · React",
+        url: 'https://github.com/debopriyobasu/semantic-resume-matcher',
+      },
+    ],
+    certs: [
+      {
+        label: 'IA & IA Générative',
+        items: [
+          'Professionnel certifié en IA générative Oracle',
+          'Professionnel certifié en recherche vectorielle IA Oracle',
+          "Associé aux fondations d'intelligence artificielle de l'infrastructure cloud Oracle",
+        ],
+      },
+      {
+        label: 'Architecture Cloud',
+        items: [
+          'Architecte cloud professionnel Google Cloud',
+          'Architecte de solutions certifié AWS - Associé',
+        ],
+      },
+      {
+        label: 'Google Cloud',
+        items: [
+          'Ingénieur cloud associé Google Cloud',
+          'Praticien de données associé Google Cloud',
+        ],
+      },
+      {
+        label: 'Microsoft Azure',
+        items: [
+          'Microsoft Certified Azure Fundamentals',
+          'Microsoft Certified Azure Data Fundamentals',
+        ],
+      },
+      {
+        label: 'Frontend & Autre',
+        items: [
+          'Certificat professionnel des fondations JavaScript Mozilla',
+          'Spécialisation de développeur frontend Meta',
+        ],
+      },
+    ],
+    education: [
+      {
+        degree: 'B.Tech - Informatique & Ingénierie des systèmes',
+        dates: 'CGPA: 8.83 / 10',
+        school: 'University of Engineering & Management, Kolkata',
       },
     ],
   },

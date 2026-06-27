@@ -4,7 +4,7 @@ import { useTranslations, localizedNames } from "../i18n/ui";
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 interface Props {
-  lang: 'en' | 'es' | 'hi' | 'bn';
+  lang: 'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr';
 }
 
 const { lang } = Astro.props;
@@ -17,6 +17,8 @@ const taglines = {
   es: 'Ingeniero de Software Senior Full Stack',
   hi: 'सीनियर फुल स्टैक सॉफ्टवेयर इंजीनियर',
   bn: 'সিনিয়র ফুল স্ট্যাক সফ্টওয়্যার ইঞ্জিনিয়ার',
+  de: 'Senior Full Stack Software Engineer',
+  fr: 'Ingénieur Logiciel Senior Full Stack',
 };
 
 const techStacks = {
@@ -24,6 +26,8 @@ const techStacks = {
   es: 'Java · Spring Boot · React · GCP',
   hi: 'जावा · स्प्रिंग बूट · रिएक्ट · जीसीपी',
   bn: 'জাভা · স্প্রিং বুট · রিঅ্যাক্ট · জিসিপি',
+  de: 'Java · Spring Boot · React · GCP',
+  fr: 'Java · Spring Boot · React · GCP',
 };
 ---
 
