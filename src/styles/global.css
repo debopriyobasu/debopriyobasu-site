@@ -572,7 +572,7 @@ a:hover {
   }
 
   .nav-avatar::after {
-    content: "Debopriyo Basu";
+    content: attr(data-name);
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--text);
@@ -613,4 +613,209 @@ a:hover {
     flex-direction: column;
     gap: 0.15rem;
   }
+}
+
+/* ============================================================
+   Tags and Badges
+   ============================================================ */
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.tag-item {
+  margin: 0;
+}
+
+.tag-item a {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  background-color: var(--accent-bg);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.55rem;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+}
+
+.tag-item a:hover {
+  color: var(--link-hover);
+  background-color: var(--border);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.blog-post-item {
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 0;
+}
+
+.blog-post-item:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.blog-post-link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  width: 100%;
+}
+
+.blog-post-link-row:hover {
+  color: var(--link);
+  text-decoration: none;
+}
+
+/* All tags index section with collapsible filter search */
+.tags-filter-section {
+  margin-bottom: 2rem;
+  background-color: var(--accent-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.filter-toggle-btn:hover {
+  background-color: var(--border);
+}
+
+.filter-toggle-btn .filter-icon {
+  opacity: 0.8;
+  color: var(--link);
+}
+
+.filter-toggle-btn .chevron-icon {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+.filter-toggle-btn[aria-expanded="true"] .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.filter-collapse-content {
+  padding: 0 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--border);
+  max-height: 500px;
+  opacity: 1;
+  transition: max-height 0.25s ease, padding 0.25s ease, opacity 0.25s ease;
+}
+
+.filter-collapse-content.hidden {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  border-top-color: transparent;
+  pointer-events: none;
+}
+
+/* Tag Search Input */
+.tags-search-wrapper {
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.tag-search-input {
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  border: 1px solid var(--border);
+  background-color: var(--bg);
+  color: var(--text);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.tag-search-input:focus {
+  border-color: var(--link);
+}
+
+/* Tag Button Reset */
+.tag-filter-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.all-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filter-tag-item {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  background-color: var(--accent-bg);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.55rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+}
+
+.filter-tag-item:hover:not(.active) {
+  color: var(--link-hover);
+  background-color: var(--border);
+  transform: translateY(-1px);
+}
+
+.filter-tag-item.active {
+  color: var(--bg) !important;
+  background-color: var(--link) !important;
+  border-color: var(--link) !important;
+}
+
+.filter-tag-item.active button {
+  color: var(--bg) !important;
 }

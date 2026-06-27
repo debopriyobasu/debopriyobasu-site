@@ -1,22 +1,32 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import { getLangFromUrl, useTranslations } from "../i18n/ui";
+import { getLangFromUrl, useTranslations, localizedNames } from "../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 interface Props {
   title: string;
   description?: string;
   date?: string;
+  tags?: string[];
 }
-
-const {
-  title,
-  description = `${title} - a post by Debopriyo Basu`,
-  date,
-} = Astro.props;
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const defaultName = localizedNames[lang];
+
+const postByTemplates = {
+  en: (title: string, author: string) => `${title} - a post by ${author}`,
+  es: (title: string, author: string) => `${title} - un post de ${author}`,
+  hi: (title: string, author: string) => `${title} - ${author} की एक पोस्ट`,
+  bn: (title: string, author: string) => `${title} - ${author} এর একটি পোস্ট`,
+};
+
+const {
+  title,
+  description = postByTemplates[lang]?.(title, defaultName) || `${title} - a post by ${defaultName}`,
+  date,
+  tags = [],
+} = Astro.props;
 
 const homeUrl = getRelativeLocaleUrl(lang, "");
 const blogUrl = getRelativeLocaleUrl(lang, "blog");
@@ -38,6 +48,15 @@ const blogUrl = getRelativeLocaleUrl(lang, "blog");
     <header class="blog-post-header">
       <h2 class="blog-post-title">{title}</h2>
       {date && <p class="blog-post-date">{date}</p>}
+      {tags && tags.length > 0 && (
+        <ul class="tags-list" style="margin-top: 0.75rem;">
+          {tags.map((tag) => (
+            <li class="tag-item">
+              <a href={getRelativeLocaleUrl(lang, "blog") + `?tag=${tag}`}>{tag}</a>
+            </li>
+          ))}
+        </ul>
+      )}
     </header>
 
     <div class="blog-post-body">

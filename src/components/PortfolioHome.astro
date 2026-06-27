@@ -1,6 +1,6 @@
 ---
 import { homeDataMap } from "../i18n/data";
-import { useTranslations } from "../i18n/ui";
+import { useTranslations, localizedNames } from "../i18n/ui";
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 interface Props {
@@ -18,13 +18,20 @@ const taglines = {
   hi: 'सीनियर फुल स्टैक सॉफ्टवेयर इंजीनियर',
   bn: 'সিনিয়র ফুল স্ট্যাক সফ্টওয়্যার ইঞ্জিনিয়ার',
 };
+
+const techStacks = {
+  en: 'Java · Spring Boot · React · GCP',
+  es: 'Java · Spring Boot · React · GCP',
+  hi: 'जावा · स्प्रिंग बूट · रिएक्ट · जीसीपी',
+  bn: 'জাভা · স্প্রিং বুট · রিঅ্যাক্ট · জিসিপি',
+};
 ---
 
-<h1 class="identity-name-heading">Debopriyo Basu</h1>
+<h1 class="identity-name-heading">{localizedNames[lang]}</h1>
 <p class="tagline">
   {taglines[lang]}
 </p>
-<p class="tech-stack">Java · Spring Boot · React · GCP</p>
+<p class="tech-stack">{techStacks[lang]}</p>
 
 <p class="bio">
   {data.bio}
@@ -146,11 +153,11 @@ const taglines = {
   <a
     href="https://linkedin.com/in/dpbasu"
     target="_blank"
-    rel="noopener noreferrer">LinkedIn</a
+    rel="noopener noreferrer">{t('link.linkedin')}</a
   >
   &nbsp;·&nbsp;<a
     href="https://github.com/debopriyobasu"
     target="_blank"
-    rel="noopener noreferrer">GitHub</a
+    rel="noopener noreferrer">{t('link.github')}</a
   >
 </p>

@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PortfolioHome from "../../components/PortfolioHome.astro";
-import { useTranslations } from "../../i18n/ui";
+import { useTranslations, localizedNames } from "../../i18n/ui";
 
 const t = useTranslations("bn");
 ---
 
 <BaseLayout
-  title="Debopriyo Basu"
+  title={localizedNames.bn}
   description={t("meta.description")}
 >
   <PortfolioHome lang="bn" />

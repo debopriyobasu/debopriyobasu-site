@@ -2,6 +2,7 @@
 title: "Building a Semantic Resume Matcher - Offline, Private, and Actually Smart"
 description: "How I built a fully local, AI-powered resume matching system that respects data privacy, eliminates cloud API costs, and goes far beyond keyword search."
 date: 2026-06-26
+tags: ["AI", "Postgres", "FastAPI", "React"]
 ---
 
 Hiring at scale is broken. Not because companies lack candidates, but because the tools used to surface the right ones are embarrassingly primitive for 2026. I built **Semantic Resume Matcher** to fix that, and to do it entirely offline.

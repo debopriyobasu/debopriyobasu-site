@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { getLangFromUrl, useTranslations, getPathWithoutLocale } from "../i18n/ui";
+import { getLangFromUrl, useTranslations, getPathWithoutLocale, localizedNames } from "../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 
@@ -9,16 +9,17 @@ interface Props {
   description?: string;
 }
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const defaultName = localizedNames[lang];
+
 const {
-  title = "Debopriyo Basu",
+  title = defaultName,
   description = "Senior Full Stack Software Engineer with 7+ years of experience in Java, Spring Boot, React, and Google Cloud Platform. Specialising in cloud-native microservice architecture.",
 } = Astro.props;
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-
-const pageTitle =
-  title === "Debopriyo Basu" ? title : `${title} - Debopriyo Basu`;
+const isNameOnly = title === defaultName || Object.values(localizedNames).includes(title);
+const pageTitle = isNameOnly ? defaultName : `${title} - ${defaultName}`;
 const canonicalURL = new URL(
   Astro.url.pathname,
   Astro.site ?? Astro.url.origin,
@@ -66,8 +67,8 @@ const blogUrl = getRelativeLocaleUrl(lang, "blog");
   <body>
     <!-- Fixed left sidebar - desktop nav -->
     <nav class="site-nav" aria-label="Site navigation">
-      <a href={homeUrl} class="nav-avatar" aria-label="Go to home">
-        <img src="/profilepic.jpeg" alt="Debopriyo Basu" />
+      <a href={homeUrl} class="nav-avatar" data-name={defaultName} aria-label="Go to home">
+        <img src="/profilepic.jpeg" alt={defaultName} />
       </a>
 
       <ul class="nav-links" role="list">

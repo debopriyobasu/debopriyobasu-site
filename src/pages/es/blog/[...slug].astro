@@ -25,6 +25,7 @@ const formattedDate = post.data.date.toLocaleDateString("es", {
   title={post.data.title}
   description={post.data.description}
   date={formattedDate}
+  tags={post.data.tags}
 >
   <Content />
 </BlogPostLayout>
