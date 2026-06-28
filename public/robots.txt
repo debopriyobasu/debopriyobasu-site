@@ -1,0 +1,22 @@
+# User Agent rules for AI bots and search engines
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Rules for all other bots
+User-agent: *
+Allow: /
+
+# Sitemap URL
+Sitemap: https://debopriyobasu.com/sitemap-index.xml

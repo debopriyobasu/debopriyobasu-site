@@ -1,0 +1,14 @@
+# Debopriyo Basu
+
+> Debopriyo Basu's portfolio website containing details about his work, projects, and articles.
+
+## Information
+- Domain: https://debopriyobasu.com
+- Type: Personal Portfolio and Blog
+
+## Navigation
+- [Home](https://debopriyobasu.com/): Welcome page, introduction, and developer portfolio.
+- [Blog](https://debopriyobasu.com/blog): List of blog posts and articles.
+
+## Blog Posts
+- [Semantic Resume Matcher](https://debopriyobasu.com/blog/semantic-resume-matcher): A project detailing how to match resumes semantically using AI.
