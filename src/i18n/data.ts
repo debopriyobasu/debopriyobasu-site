@@ -62,19 +62,10 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeDa
       {
         title: 'Cloud & Infrastructure',
         items: [
-          'Google Cloud Platform (GCP)',
-          'Google Kubernetes Engine (GKE)',
-          'AWS · Microsoft Azure',
-          'Docker · Containerisation',
-        ],
-      },
-      {
-        title: 'Developer Platforms',
-        items: [
-          'Backstage Golden Paths',
-          'Jenkins Groovy DSL Pipelines',
-          'GitHub Actions · CI/CD',
-          'Ollama (Gemma3 · Llama3.2)',
+          'GCP · AWS · Azure',
+          'Docker · GitHub Actions',
+          'Harness · Jenkins',
+          'Terraform',
         ],
       },
     ],
@@ -172,19 +163,10 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeDa
       {
         title: 'Cloud e Infraestructura',
         items: [
-          'Google Cloud Platform (GCP)',
-          'Google Kubernetes Engine (GKE)',
-          'AWS · Microsoft Azure',
-          'Docker · Contenedores',
-        ],
-      },
-      {
-        title: 'Plataformas de Desarrollador',
-        items: [
-          'Rutas doradas de Backstage',
-          'Pipelines DSL de Jenkins Groovy',
-          'GitHub Actions · CI/CD',
-          'Ollama (Gemma3 · Llama3.2)',
+          'GCP · AWS · Azure',
+          'Docker · GitHub Actions',
+          'Harness · Jenkins',
+          'Terraform',
         ],
       },
     ],
@@ -282,19 +264,10 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeDa
       {
         title: 'क्लाउड और इंफ्रास्ट्रक्चर',
         items: [
-          'गूगल क्लाउड प्लेटफॉर्म',
-          'गूगल कुबेरनेटीस इंजन',
-          'एडब्ल्यूएस · माइक्रोसॉफ्ट एज़्योर',
-          'डॉकर · कंटेनराइजेशन',
-        ],
-      },
-      {
-        title: 'डेवलपर प्लेटफॉर्म्स',
-        items: [
-          'बैकस्टेज गोल्डन पाथ्स',
-          'जेनकिंस ग्रूवी डीएसएल पाइपलाइन्स',
-          'गिटहब एक्शन्स · सीआई/सीडी',
-          'ओलामा (गेमा३ · लामा३.२)',
+          'जीसीपी · एडब्ल्यूएस · एज़्योर',
+          'डॉकर · गिटहब एक्शन्स',
+          'हार्नेस · जेनकिंस',
+          'टेराफॉर्म',
         ],
       },
     ],
@@ -392,19 +365,10 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeDa
       {
         title: 'ক্লাউড ও ইনফ্রাস্ট্রাকচার',
         items: [
-          'গুগল ক্লাউড প্ল্যাটফর্ম',
-          'গুগল কুবারনেটিস ইঞ্জিন',
-          'এডাব্লিউএস · মাইক্রোসফট অ্যাজুর',
-          'ডকার · কন্টেইনারাইজেশন',
-        ],
-      },
-      {
-        title: 'ডেভেলপার প্ল্যাটফর্ম',
-        items: [
-          'ব্যাকস্টেজ গোল্ডেন পাথস',
-          'জেনকিন্স গ্রুভি ডিএসএল পাইপলাইনস',
-          'গিটহাব অ্যাকশনস · সিআই/সিডি',
-          'ওলামা (গেমা৩ · লামা৩.২)',
+          'জিসিপি · এডাব্লিউএস · আজুর',
+          'ডকার · গিটহাব অ্যাকশনস',
+          'হার্নেস · জেনকিন্স',
+          'টেরাফর্ম',
         ],
       },
     ],
@@ -502,19 +466,10 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeDa
       {
         title: 'Cloud & Infrastruktur',
         items: [
-          'Google Cloud Platform (GCP)',
-          'Google Kubernetes Engine (GKE)',
-          'AWS · Microsoft Azure',
-          'Docker · Containerisierung',
-        ],
-      },
-      {
-        title: 'Entwicklerplattformen',
-        items: [
-          'Backstage Golden Paths',
-          'Jenkins Groovy DSL Pipelines',
-          'GitHub Actions · CI/CD',
-          'Ollama (Gemma3 · Llama3.2)',
+          'GCP · AWS · Azure',
+          'Docker · GitHub Actions',
+          'Harness · Jenkins',
+          'Terraform',
         ],
       },
     ],
@@ -612,19 +567,10 @@ export const homeDataMap: Record<'en' | 'es' | 'hi' | 'bn' | 'de' | 'fr', HomeDa
       {
         title: 'Cloud & Infrastructure',
         items: [
-          'Google Cloud Platform (GCP)',
-          'Google Kubernetes Engine (GKE)',
-          'AWS · Microsoft Azure',
-          'Docker · Conteneurisation',
-        ],
-      },
-      {
-        title: 'Plateformes de développement',
-        items: [
-          'Backstage Golden Paths',
-          'Pipelines DSL Jenkins Groovy',
-          'GitHub Actions · CI/CD',
-          'Ollama (Gemma3 · Llama3.2)',
+          'GCP · AWS · Azure',
+          'Docker · GitHub Actions',
+          'Harness · Jenkins',
+          'Terraform',
         ],
       },
     ],
