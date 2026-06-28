@@ -29,6 +29,11 @@ const techStacks = {
   de: 'Java · Spring Boot · React · GCP',
   fr: 'Java · Spring Boot · React · GCP',
 };
+
+/** Converts **bold text** markers to <strong> HTML tags for bullet rendering. */
+function boldify(text: string): string {
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
 ---
 
 <h1 class="identity-name-heading">{localizedNames[lang]}</h1>
@@ -80,7 +85,7 @@ const techStacks = {
           <p class="experience-company">{item.company}</p>
           <ul class="experience-bullets">
             {item.bullets.map((bullet) => (
-              <li>{bullet}</li>
+              <li set:html={boldify(bullet)} />
             ))}
           </ul>
         </li>
