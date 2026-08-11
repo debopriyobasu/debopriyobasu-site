@@ -6,7 +6,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check",
+    "lint": "eslint .",
+    "validate": "pnpm check && pnpm lint"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",
@@ -15,6 +18,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@typescript-eslint/parser": "^8.67.0",
+    "eslint": "^10.8.1",
+    "eslint-plugin-astro": "^3.1.0",
     "typescript": "^6.0.0"
   }
 }
