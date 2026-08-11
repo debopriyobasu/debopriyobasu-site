@@ -1,12 +1,17 @@
 ---
 import "../styles/global.css";
-import { getLangFromUrl, useTranslations, getPathWithoutLocale, localizedNames } from "../i18n/ui";
+import {
+    getLangFromUrl,
+    useTranslations,
+    getPathWithoutLocale,
+    localizedNames,
+} from "../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 
 interface Props {
-  title?: string;
-  description?: string;
+    title?: string;
+    description?: string;
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -14,15 +19,17 @@ const t = useTranslations(lang);
 const defaultName = localizedNames[lang];
 
 const {
-  title = defaultName,
-  description = "Senior Full Stack Software Engineer with 7+ years of experience in Java, Spring Boot, React, and Google Cloud Platform. Specialising in cloud-native microservice architecture.",
+    title = defaultName,
+    description = "Senior Full Stack Software Engineer with 7+ years of experience in Java, Spring Boot, React, and Google Cloud Platform. Specialising in cloud-native microservice architecture.",
 } = Astro.props;
 
-const isNameOnly = title === defaultName || Object.values(localizedNames).includes(title);
+const isNameOnly =
+    title === defaultName ||
+    (Object.values(localizedNames) as string[]).includes(title);
 const pageTitle = isNameOnly ? defaultName : `${title} - ${defaultName}`;
 const canonicalURL = new URL(
-  Astro.url.pathname,
-  Astro.site ?? Astro.url.origin,
+    Astro.url.pathname,
+    Astro.site ?? Astro.url.origin,
 );
 const ogImage = new URL("/profilepic.jpeg", Astro.site ?? Astro.url.origin);
 
@@ -36,104 +43,117 @@ const blogUrl = getRelativeLocaleUrl(lang, "blog");
 ---
 
 <html lang={lang}>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{pageTitle}</title>
+        <meta name="description" content={description} />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:image" content={ogImage} />
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:image" content={ogImage} />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
 
-    <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" href="/favicon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- Fixed left sidebar - desktop nav -->
-    <nav class="site-nav" aria-label="Site navigation">
-      <a href={homeUrl} class="nav-avatar" data-name={defaultName} aria-label="Go to home">
-        <img src="/profilepic.jpeg" alt={defaultName} />
-      </a>
-
-      <ul class="nav-links" role="list">
-        <li>
-          <a
-            href={homeUrl}
-            class:list={["nav-link", { "nav-link--active": isHome }]}
-            aria-current={isHome ? "page" : undefined}
-          >
-            <!-- Person icon -->
-            <svg
-              class="nav-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+        <link rel="canonical" href={canonicalURL} />
+        <link rel="icon" href="/favicon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <!-- Fixed left sidebar - desktop nav -->
+        <nav class="site-nav" aria-label="Site navigation">
+            <a
+                href={homeUrl}
+                class="nav-avatar"
+                data-name={defaultName}
+                aria-label="Go to home"
             >
-              <circle cx="12" cy="8" r="4"></circle>
-              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"></path>
-            </svg>
-            <span>{t("nav.about")}</span>
-          </a>
-        </li>
-        <li>
-          <a
-            href={blogUrl}
-            class:list={["nav-link", { "nav-link--active": isBlog }]}
-            aria-current={isBlog ? "page" : undefined}
-          >
-            <!-- Document/pencil icon -->
-            <svg
-              class="nav-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-            </svg>
-            <span>{t("nav.blog")}</span>
-          </a>
-        </li>
-      </ul>
+                <img src="/profilepic.jpeg" alt={defaultName} />
+            </a>
 
-      <LanguageSwitcher />
-    </nav>
+            <ul class="nav-links" role="list">
+                <li>
+                    <a
+                        href={homeUrl}
+                        class:list={[
+                            "nav-link",
+                            { "nav-link--active": isHome },
+                        ]}
+                        aria-current={isHome ? "page" : undefined}
+                    >
+                        <!-- Person icon -->
+                        <svg
+                            class="nav-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"></path>
+                        </svg>
+                        <span>{t("nav.about")}</span>
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href={blogUrl}
+                        class:list={[
+                            "nav-link",
+                            { "nav-link--active": isBlog },
+                        ]}
+                        aria-current={isBlog ? "page" : undefined}
+                    >
+                        <!-- Document/pencil icon -->
+                        <svg
+                            class="nav-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M12 20h9"></path>
+                            <path
+                                d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"
+                            ></path>
+                        </svg>
+                        <span>{t("nav.blog")}</span>
+                    </a>
+                </li>
+            </ul>
 
-    <!-- Main content -->
-    <main class="site-content">
-      <div class="site-content-inner">
-        <slot />
-      </div>
-    </main>
-  </body>
+            <LanguageSwitcher />
+        </nav>
+
+        <!-- Main content -->
+        <main class="site-content">
+            <div class="site-content-inner">
+                <slot />
+            </div>
+        </main>
+    </body>
 </html>

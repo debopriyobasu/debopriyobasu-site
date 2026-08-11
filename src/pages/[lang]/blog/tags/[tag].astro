@@ -7,58 +7,69 @@ import { SITE_CONFIG } from "../../../../config";
 import Pagination from "../../../../components/Pagination.astro";
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-  const nonDefaultLocales = Object.keys(ui).filter((lang) => lang !== "en");
+    const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+    const nonDefaultLocales = Object.keys(ui).filter((lang) => lang !== "en");
 
-  // Helper function to extract slug and lang from post.id
-  function parsePostId(id: string) {
-    const lastSlash = id.lastIndexOf("/");
-    if (lastSlash === -1) {
-      return { slug: id, postLang: "en" };
-    }
-    return {
-      slug: id.slice(0, lastSlash),
-      postLang: id.slice(lastSlash + 1),
-    };
-  }
-
-  const uniqueSlugs = [...new Set(allPosts.map((post) => parsePostId(post.id).slug))];
-  const paths = [];
-
-  for (const lang of nonDefaultLocales) {
-    // Resolve posts for this locale with fallback to English
-    const postsForLocale = uniqueSlugs
-      .map((slug) => {
-        const localizedPost = allPosts.find((p) => {
-          const parsed = parsePostId(p.id);
-          return parsed.slug === slug && parsed.postLang === lang;
-        });
-        if (localizedPost) {
-          return { post: localizedPost, isFallback: false };
+    // Helper function to extract slug and lang from post.id
+    function parsePostId(id: string) {
+        const lastSlash = id.lastIndexOf("/");
+        if (lastSlash === -1) {
+            return { slug: id, postLang: "en" };
         }
-        const englishPost = allPosts.find((p) => {
-          const parsed = parsePostId(p.id);
-          return parsed.slug === slug && parsed.postLang === "en";
-        });
-        if (englishPost) {
-          return { post: englishPost, isFallback: true };
-        }
-        return null;
-      })
-      .filter((item): item is { post: any; isFallback: boolean } => item !== null);
-
-    const tags = [...new Set(postsForLocale.flatMap((item) => item.post.data.tags || []))];
-
-    for (const tag of tags) {
-      const postsForTag = postsForLocale.filter((item) => item.post.data.tags?.includes(tag));
-      paths.push({
-        params: { lang, tag },
-        props: { posts: postsForTag },
-      });
+        return {
+            slug: id.slice(0, lastSlash),
+            postLang: id.slice(lastSlash + 1),
+        };
     }
-  }
 
-  return paths;
+    const uniqueSlugs = [
+        ...new Set(allPosts.map((post) => parsePostId(post.id).slug)),
+    ];
+    const paths = [];
+
+    for (const lang of nonDefaultLocales) {
+        // Resolve posts for this locale with fallback to English
+        const postsForLocale = uniqueSlugs
+            .map((slug) => {
+                const localizedPost = allPosts.find((p) => {
+                    const parsed = parsePostId(p.id);
+                    return parsed.slug === slug && parsed.postLang === lang;
+                });
+                if (localizedPost) {
+                    return { post: localizedPost, isFallback: false };
+                }
+                const englishPost = allPosts.find((p) => {
+                    const parsed = parsePostId(p.id);
+                    return parsed.slug === slug && parsed.postLang === "en";
+                });
+                if (englishPost) {
+                    return { post: englishPost, isFallback: true };
+                }
+                return null;
+            })
+            .filter(
+                (item): item is { post: any; isFallback: boolean } =>
+                    item !== null,
+            );
+
+        const tags = [
+            ...new Set(
+                postsForLocale.flatMap((item) => item.post.data.tags || []),
+            ),
+        ];
+
+        for (const tag of tags) {
+            const postsForTag = postsForLocale.filter((item) =>
+                item.post.data.tags?.includes(tag),
+            );
+            paths.push({
+                params: { lang, tag },
+                props: { posts: postsForTag },
+            });
+        }
+    }
+
+    return paths;
 }
 
 const { tag, lang } = Astro.params;
@@ -70,195 +81,259 @@ const blogUrl = getRelativeLocaleUrl(lang as any, "blog");
 
 // Helper function to extract slug and lang from post.id
 function parsePostId(id: string) {
-  const lastSlash = id.lastIndexOf("/");
-  if (lastSlash === -1) {
-    return { slug: id, postLang: "en" };
-  }
-  return {
-    slug: id.slice(0, lastSlash),
-    postLang: id.slice(lastSlash + 1),
-  };
+    const lastSlash = id.lastIndexOf("/");
+    if (lastSlash === -1) {
+        return { slug: id, postLang: "en" };
+    }
+    return {
+        slug: id.slice(0, lastSlash),
+        postLang: id.slice(lastSlash + 1),
+    };
 }
 
-const sortedPosts = posts.sort((a, b) => b.post.data.date.valueOf() - a.post.data.date.valueOf());
+const sortedPosts = posts.sort(
+    (a, b) => b.post.data.date.valueOf() - a.post.data.date.valueOf(),
+);
 const postsPerPage = SITE_CONFIG.postsPerPage;
 ---
 
 <BaseLayout
-  title={`${t("blog.tagged_with")} "${tag}"`}
-  description={`${t("blog.tagged_with")} "${tag}"`}
+    title={`${t("blog.tagged_with")} "${tag}"`}
+    description={`${t("blog.tagged_with")} "${tag}"`}
 >
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <ol>
-      <li><a href={homeUrl}>{t("nav.home")}</a></li>
-      <li aria-hidden="true" class="breadcrumb-sep">›</li>
-      <li><a href={blogUrl}>{t("nav.blog")}</a></li>
-      <li aria-hidden="true" class="breadcrumb-sep">›</li>
-      <li aria-current="page">{t("blog.tags")}: {tag}</li>
-    </ol>
-  </nav>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol>
+            <li><a href={homeUrl}>{t("nav.home")}</a></li>
+            <li aria-hidden="true" class="breadcrumb-sep">›</li>
+            <li><a href={blogUrl}>{t("nav.blog")}</a></li>
+            <li aria-hidden="true" class="breadcrumb-sep">›</li>
+            <li aria-current="page">{t("blog.tags")}: {tag}</li>
+        </ol>
+    </nav>
 
-  <h2 class="blog-index-title">{t("blog.tagged_with")} "{tag}"</h2>
-  
-  <ul class="blog-post-list">
-    {
-      sortedPosts.map(({ post, isFallback }) => {
-        const { slug } = parsePostId(post.id);
-        const postUrl = getRelativeLocaleUrl(lang as any, `blog/${slug}`);
-        return (
-          <li class="blog-post-item">
-            <a href={postUrl} class="blog-post-link-row">
-              <span class="blog-post-item-title">
-                {post.data.title}
-                {isFallback && <span class="fallback-badge" style="font-size: 0.75rem; font-weight: normal; color: var(--muted); margin-left: 0.5rem; border: 1px solid var(--border); padding: 0.1rem 0.3rem; border-radius: 4px;">EN</span>}
-              </span>
-              <span class="blog-post-item-date">
-                {post.data.date.toLocaleDateString(lang, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
-            </a>
-            {post.data.tags && post.data.tags.length > 0 && (
-              <ul class="tags-list">
-                {post.data.tags.map((tVal) => (
-                  <li class="tag-item">
-                    <a href={getRelativeLocaleUrl(lang as any, "blog") + `?tag=${tVal}`}>{tVal}</a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        );
-      })
-    }
-  </ul>
+    <h2 class="blog-index-title">{t("blog.tagged_with")} "{tag}"</h2>
 
-  <Pagination
-    postsPerPage={postsPerPage}
-    prevText={t("blog.pagination.prev")}
-    nextText={t("blog.pagination.next")}
-    pageText={t("blog.pagination.page")}
-  />
-
-  <footer class="blog-post-footer">
-    <a href={blogUrl} class="back-link">{t("blog.back_to_blog")}</a>
-  </footer>
-
-  <script is:inline>
-    document.addEventListener('DOMContentLoaded', () => {
-      const postItems = Array.from(document.querySelectorAll('.blog-post-item'));
-      const paginationContainer = document.getElementById('pagination-controls');
-      if (!paginationContainer) return;
-
-      const postsPerPage = parseInt(paginationContainer.getAttribute('data-posts-per-page') || '10', 10);
-      let currentPage = 1;
-
-      function updateBlogList() {
-        const totalPosts = postItems.length;
-        const totalPages = Math.ceil(totalPosts / postsPerPage);
-
-        if (currentPage > totalPages) {
-          currentPage = Math.max(1, totalPages);
+    <ul class="blog-post-list">
+        {
+            sortedPosts.map(({ post, isFallback }) => {
+                const { slug } = parsePostId(post.id);
+                const postUrl = getRelativeLocaleUrl(
+                    lang as any,
+                    `blog/${slug}`,
+                );
+                return (
+                    <li class="blog-post-item">
+                        <a href={postUrl} class="blog-post-link-row">
+                            <span class="blog-post-item-title">
+                                {post.data.title}
+                                {isFallback && (
+                                    <span
+                                        class="fallback-badge"
+                                        style="font-size: 0.75rem; font-weight: normal; color: var(--muted); margin-left: 0.5rem; border: 1px solid var(--border); padding: 0.1rem 0.3rem; border-radius: 4px;"
+                                    >
+                                        EN
+                                    </span>
+                                )}
+                            </span>
+                            <span class="blog-post-item-date">
+                                {post.data.date.toLocaleDateString(lang, {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
+                            </span>
+                        </a>
+                        {post.data.tags && post.data.tags.length > 0 && (
+                            <ul class="tags-list">
+                                {post.data.tags.map((tVal: string) => (
+                                    <li class="tag-item">
+                                        <a
+                                            href={
+                                                getRelativeLocaleUrl(
+                                                    lang as any,
+                                                    "blog",
+                                                ) + `?tag=${tVal}`
+                                            }
+                                        >
+                                            {tVal}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </li>
+                );
+            })
         }
+    </ul>
 
-        postItems.forEach((post, index) => {
-          const startIdx = (currentPage - 1) * postsPerPage;
-          const endIdx = startIdx + postsPerPage;
-          if (index >= startIdx && index < endIdx) {
-            post.style.display = '';
-          } else {
-            post.style.display = 'none';
-          }
-        });
+    <Pagination
+        postsPerPage={postsPerPage}
+        prevText={t("blog.pagination.prev")}
+        nextText={t("blog.pagination.next")}
+        pageText={t("blog.pagination.page")}
+    />
 
-        renderPagination(totalPages);
-      }
+    <footer class="blog-post-footer">
+        <a href={blogUrl} class="back-link">{t("blog.back_to_blog")}</a>
+    </footer>
 
-      function renderPagination(totalPages) {
-        if (totalPages <= 1) {
-          paginationContainer.innerHTML = '';
-          paginationContainer.style.display = 'none';
-          return;
-        }
+    <script is:inline>
+        document.addEventListener("DOMContentLoaded", () => {
+            const postItems = Array.from(
+                document.querySelectorAll(".blog-post-item"),
+            );
+            const paginationContainer = document.getElementById(
+                "pagination-controls",
+            );
+            if (!paginationContainer) return;
 
-        paginationContainer.style.display = 'flex';
-        let html = '';
+            const postsPerPage = parseInt(
+                paginationContainer.getAttribute("data-posts-per-page") || "10",
+                10,
+            );
+            let currentPage = 1;
 
-        const prevDisabled = currentPage === 1 ? 'disabled' : '';
-        const prevText = paginationContainer.getAttribute('data-prev-text') || '← Previous';
-        html += `<button class="pagination-btn" data-page="${currentPage - 1}" ${prevDisabled} aria-label="${prevText}">${prevText}</button>`;
+            function updateBlogList() {
+                const totalPosts = postItems.length;
+                const totalPages = Math.ceil(totalPosts / postsPerPage);
 
-        const pagesToShow = [];
-        const range = 1;
+                if (currentPage > totalPages) {
+                    currentPage = Math.max(1, totalPages);
+                }
 
-        for (let i = 1; i <= totalPages; i++) {
-          if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
-            pagesToShow.push(i);
-          } else if ((i === currentPage - range - 1 && i > 1) || (i === currentPage + range + 1 && i < totalPages)) {
-            pagesToShow.push('...');
-          }
-        }
+                postItems.forEach((post, index) => {
+                    const startIdx = (currentPage - 1) * postsPerPage;
+                    const endIdx = startIdx + postsPerPage;
+                    if (index >= startIdx && index < endIdx) {
+                        post.style.display = "";
+                    } else {
+                        post.style.display = "none";
+                    }
+                });
 
-        let lastVal = null;
-        pagesToShow.forEach(p => {
-          if (p === '...') {
-            if (lastVal !== '...') {
-              html += `<span class="pagination-ellipsis" aria-hidden="true">...</span>`;
+                renderPagination(totalPages);
             }
-          } else {
-            const activeClass = p === currentPage ? 'active' : '';
-            const pageText = paginationContainer.getAttribute('data-page-text') || 'Page {page}';
-            const ariaLabel = pageText.replace('{page}', String(p));
-            const ariaCurrent = p === currentPage ? 'aria-current="page"' : '';
-            html += `<button class="pagination-btn ${activeClass}" data-page="${p}" ${ariaCurrent} aria-label="${ariaLabel}">${p}</button>`;
-          }
-          lastVal = p;
-        });
 
-        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
-        const nextText = paginationContainer.getAttribute('data-next-text') || 'Next →';
-        html += `<button class="pagination-btn" data-page="${currentPage + 1}" ${nextDisabled} aria-label="${nextText}">${nextText}</button>`;
+            function renderPagination(totalPages) {
+                if (totalPages <= 1) {
+                    paginationContainer.innerHTML = "";
+                    paginationContainer.style.display = "none";
+                    return;
+                }
 
-        paginationContainer.innerHTML = html;
+                paginationContainer.style.display = "flex";
+                let html = "";
 
-        paginationContainer.querySelectorAll('button[data-page]').forEach(button => {
-          button.addEventListener('click', () => {
-            const targetPage = parseInt(button.getAttribute('data-page') || '1', 10);
-            if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
-              currentPage = targetPage;
+                const prevDisabled = currentPage === 1 ? "disabled" : "";
+                const prevText =
+                    paginationContainer.getAttribute("data-prev-text") ||
+                    "← Previous";
+                html += `<button class="pagination-btn" data-page="${currentPage - 1}" ${prevDisabled} aria-label="${prevText}">${prevText}</button>`;
 
-              const url = new URL(window.location.href);
-              url.searchParams.set('page', String(currentPage));
-              window.history.pushState({}, '', url.toString());
+                const pagesToShow = [];
+                const range = 1;
 
-              updateBlogList();
+                for (let i = 1; i <= totalPages; i++) {
+                    if (
+                        i === 1 ||
+                        i === totalPages ||
+                        (i >= currentPage - range && i <= currentPage + range)
+                    ) {
+                        pagesToShow.push(i);
+                    } else if (
+                        (i === currentPage - range - 1 && i > 1) ||
+                        (i === currentPage + range + 1 && i < totalPages)
+                    ) {
+                        pagesToShow.push("...");
+                    }
+                }
 
-              const blogList = document.querySelector('.blog-post-list');
-              if (blogList) {
-                blogList.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
+                let lastVal = null;
+                pagesToShow.forEach((p) => {
+                    if (p === "...") {
+                        if (lastVal !== "...") {
+                            html += `<span class="pagination-ellipsis" aria-hidden="true">...</span>`;
+                        }
+                    } else {
+                        const activeClass = p === currentPage ? "active" : "";
+                        const pageText =
+                            paginationContainer.getAttribute(
+                                "data-page-text",
+                            ) || "Page {page}";
+                        const ariaLabel = pageText.replace("{page}", String(p));
+                        const ariaCurrent =
+                            p === currentPage ? 'aria-current="page"' : "";
+                        html += `<button class="pagination-btn ${activeClass}" data-page="${p}" ${ariaCurrent} aria-label="${ariaLabel}">${p}</button>`;
+                    }
+                    lastVal = p;
+                });
+
+                const nextDisabled =
+                    currentPage === totalPages ? "disabled" : "";
+                const nextText =
+                    paginationContainer.getAttribute("data-next-text") ||
+                    "Next →";
+                html += `<button class="pagination-btn" data-page="${currentPage + 1}" ${nextDisabled} aria-label="${nextText}">${nextText}</button>`;
+
+                paginationContainer.innerHTML = html;
+
+                paginationContainer
+                    .querySelectorAll("button[data-page]")
+                    .forEach((button) => {
+                        button.addEventListener("click", () => {
+                            const targetPage = parseInt(
+                                button.getAttribute("data-page") || "1",
+                                10,
+                            );
+                            if (
+                                targetPage >= 1 &&
+                                targetPage <= totalPages &&
+                                targetPage !== currentPage
+                            ) {
+                                currentPage = targetPage;
+
+                                const url = new URL(window.location.href);
+                                url.searchParams.set(
+                                    "page",
+                                    String(currentPage),
+                                );
+                                window.history.pushState(
+                                    {},
+                                    "",
+                                    url.toString(),
+                                );
+
+                                updateBlogList();
+
+                                const blogList =
+                                    document.querySelector(".blog-post-list");
+                                if (blogList) {
+                                    blogList.scrollIntoView({
+                                        behavior: "smooth",
+                                        block: "start",
+                                    });
+                                }
+                            }
+                        });
+                    });
             }
-          });
+
+            // Initial check on load
+            const params = new URLSearchParams(window.location.search);
+            const initialPage = parseInt(params.get("page") || "1", 10);
+            if (initialPage > 0) {
+                currentPage = initialPage;
+            }
+
+            window.addEventListener("popstate", () => {
+                const stateParams = new URLSearchParams(window.location.search);
+                currentPage = parseInt(stateParams.get("page") || "1", 10);
+                updateBlogList();
+            });
+
+            updateBlogList();
         });
-      }
-
-      // Initial check on load
-      const params = new URLSearchParams(window.location.search);
-      const initialPage = parseInt(params.get('page') || '1', 10);
-      if (initialPage > 0) {
-        currentPage = initialPage;
-      }
-
-      window.addEventListener('popstate', () => {
-        const stateParams = new URLSearchParams(window.location.search);
-        currentPage = parseInt(stateParams.get('page') || '1', 10);
-        updateBlogList();
-      });
-
-      updateBlogList();
-    });
-  </script>
+    </script>
 </BaseLayout>

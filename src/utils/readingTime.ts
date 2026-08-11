@@ -1,4 +1,4 @@
-export function getReadingTime(text: string): number {
+export function getReadingTime(text: string | undefined): number {
   if (!text) return 0;
   // Clean markdown format characters to avoid inflating word count
   const cleanText = text
